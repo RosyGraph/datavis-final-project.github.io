@@ -8,15 +8,16 @@ function displayYear(data, year) {
     return +d.Year === year;
   });
   const grouped = groupByPlatform(filtered);
-  console.log(grouped);
   const x = d3
     .scaleBand()
     .domain(grouped.map((g) => g.platform))
-    .range([0, innerWidth]);
+    .range([0, innerWidth])
+    .padding(0.2);
   const y = d3
     .scaleLinear()
-    .range([0, innerHeight])
-    .domain([d3.max(grouped.map((g) => g.sales)), 0]);
+    .range([innerHeight, 0])
+    .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
+  console.log(Math.ceil(d3.max(grouped.map((g) => g.sales))));
   const svg = d3.select("#barchart-svg");
   svg
     .append("g")
@@ -26,6 +27,17 @@ function displayYear(data, year) {
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .call(d3.axisLeft(y));
+  svg
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`)
+    .selectAll("rect")
+    .data(grouped)
+    .join("rect")
+    .attr("x", (d) => x(d.platform))
+    .attr("y", (d) => y(d.sales))
+    .attr("width", x.bandwidth())
+    .attr("height", (d) => y(0) - y(d.sales));
+  console.log(grouped);
 }
 
 function groupByPlatform(data) {
