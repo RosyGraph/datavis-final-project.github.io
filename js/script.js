@@ -4,6 +4,7 @@ function setup() {
   d3.select("#bar-chart")
     .append("svg")
     .attr("id", "barchart-svg")
+    .classed("barchart", true)
     .attr("height", 400)
     .attr("width", 600);
 
