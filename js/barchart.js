@@ -17,7 +17,9 @@ function displayYear(data, year) {
     .scaleLinear()
     .range([innerHeight, 0])
     .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
-  console.log(Math.ceil(d3.max(grouped.map((g) => g.sales))));
+  const color = d3
+    .scaleOrdinal(d3.schemeCategory10)
+    .domain(grouped.map((g) => g.platform));
   const svg = d3.select("#barchart-svg");
   svg
     .append("g")
@@ -36,7 +38,8 @@ function displayYear(data, year) {
     .attr("x", (d) => x(d.platform))
     .attr("y", (d) => y(d.sales))
     .attr("width", x.bandwidth())
-    .attr("height", (d) => y(0) - y(d.sales));
+    .attr("height", (d) => y(0) - y(d.sales))
+    .attr("fill", (d) => color(d.platform));
   console.log(grouped);
 }
 
