@@ -12,7 +12,7 @@ function setup() {
     .attr("id", "bar-chart")
     .attr("class", "bar-chart");
   d3.csv("./data/video_games_dataset.csv").then((data) =>
-    displayYear(data, 1997)
+    displayYear(data, 1984)
   );
 }
 

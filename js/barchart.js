@@ -1,7 +1,7 @@
 function displayYear(data, year) {
   const height = 400,
     width = 600;
-  const margin = { top: 20, bottom: 20, left: 20, right: 20 };
+  const margin = { top: 20, bottom: 20, left: 30, right: 20 };
   const innerHeight = height - margin.top - margin.bottom,
     innerWidth = width - margin.left - margin.right;
   const filtered = data.filter((d) => {
