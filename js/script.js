@@ -1,16 +1,20 @@
 setup();
 
 function setup() {
-  d3.select("#barChart").append("svg").attr("id", "Barchart-svg");
+  d3.select("#bar-chart")
+    .append("svg")
+    .attr("id", "barchart-svg")
+    .classed("barchart", true)
+    .attr("height", 400)
+    .attr("width", 600);
 
-  d3.select("#Barchart-svg").append("g").attr("id", "Barchart-y-axis");
-  d3.select("#Barchart-svg").append("g").attr("id", "Barchart-x-axis");
-  d3.select("#Barchart-svg")
+  d3.select("#barchart-svg")
     .append("g")
-    .attr("id", "BarChart")
+    .attr("id", "bar-chart")
     .attr("class", "bar-chart");
-
-  loadData();
+  d3.csv("./data/video_games_dataset.csv").then((data) =>
+    displayYear(data, 1984)
+  );
 }
 
 function loadData() {

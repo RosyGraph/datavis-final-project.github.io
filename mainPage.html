@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>Video Game Sales Exploration</title>
     <script src="https://d3js.org/d3.v7.js"></script>
+    <style>
+      svg.barchart g rect {
+        filter: drop-shadow(8px 8px 6px rgba(26, 32, 44, 0.5));
+      }
+    </style>
   </head>
 
   <body>
@@ -13,9 +18,10 @@
 
     <div class="toolbox"></div>
     <div class="mainChart">
-        <div id ="barChart"></div>
+      <div id="bar-chart"></div>
     </div>
 
+    <script src="js/barchart.js"></script>
     <script src="js/script.js"></script>
   </body>
 </html>
