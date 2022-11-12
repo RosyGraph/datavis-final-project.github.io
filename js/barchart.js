@@ -7,12 +7,11 @@ function displayYear(data, year) {
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
-  const sort_by = d3.select('#sort_by_selection').property('value');
-  
+  const sort_by = d3.select("#sort_by_selection").property("value");
+
   let grouped;
 
-  switch(sort_by)
-  {
+  switch (sort_by) {
     case "platform":
       grouped = groupByPlatform(filtered);
       break;
@@ -20,8 +19,16 @@ function displayYear(data, year) {
     case "genre":
       grouped = groupByGenre(filtered);
       break;
+
+    case "name":
+      grouped = groupByName(filtered);
+      break;
+
+    case "publisher":
+      grouped = groupByPublisher(filtered);
+      break;
   }
-  
+
   const x = d3
     .scaleBand()
     .domain(grouped.map((g) => g[sort_by]))
@@ -36,14 +43,13 @@ function displayYear(data, year) {
     .domain(grouped.map((g) => g[sort_by]));
   const svg = d3.select("#barchart-svg");
   svg
-    .append('g')
+    .append("g")
     .selectAll("text")
     .data([year])
     .join("text")
     .attr("x", width - margin.left)
     .attr("y", margin.top)
-    .text((d) => d)
-    .classed("label", true);
+    .text((d) => d);
   svg
     .append("g")
     .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
@@ -88,6 +94,36 @@ function groupByGenre(data) {
       genre: genre,
       sales: data
         .filter((d) => d.Genre === genre)
+        .map((d) => {
+          return !d.Global_Sales ? 0 : +d.Global_Sales;
+        })
+        .reduce((p, c) => p + c, 0),
+    };
+  });
+}
+
+function groupByName(data) {
+  const names = Array.from(new Set(data.map((d) => d.Name)));
+  return names.map((name) => {
+    return {
+      name: name,
+      sales: data
+        .filter((d) => d.Name === name)
+        .map((d) => {
+          return !d.Global_Sales ? 0 : +d.Global_Sales;
+        })
+        .reduce((p, c) => p + c, 0),
+    };
+  });
+}
+
+function groupByPublisher(data) {
+  const publishers = Array.from(new Set(data.map((d) => d.Publisher)));
+  return publishers.map((publisher) => {
+    return {
+      publisher: publisher,
+      sales: data
+        .filter((d) => d.Publisher === publisher)
         .map((d) => {
           return !d.Global_Sales ? 0 : +d.Global_Sales;
         })

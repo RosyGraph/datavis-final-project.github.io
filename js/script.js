@@ -4,6 +4,7 @@ loadData();
 function loadData() {
   d3.csv("./data/video_games_dataset.csv").then((data) => {
     mainData = data;
+    console.log(mainData);
     setup();
   });
 }
@@ -27,5 +28,6 @@ function setup() {
 }
 
 function changeSort() {
+  console.log("sort by has been changed");
   displayYear(mainData, 1984);
 }
