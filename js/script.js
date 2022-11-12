@@ -12,7 +12,7 @@ function loadData() {
 function setup() {
   document.querySelector('#sort_by_selection').addEventListener('change', changeSort);
 
-  d3.select("#bar-chart")
+  d3.select("#barchart-div")
     .append("svg")
     .attr("id", "barchart-svg")
     .classed("barchart", true)
@@ -20,9 +20,20 @@ function setup() {
     .attr("width", 600);
 
   d3.select("#barchart-svg")
-    .append("g")
-    .attr("id", "bar-chart")
-    .attr("class", "bar-chart");
+  .append("g")
+  .attr("id", "barchart-year");
+
+  d3.select("#barchart-svg")
+  .append("g")
+  .attr("id", "barchart-x-axis");
+
+  d3.select("#barchart-svg")
+  .append("g")
+  .attr("id", "barchart-y-axis");
+
+  d3.select("#barchart-svg")
+  .append("g")
+  .attr("id", "barchart-content");
 
   displayYear(mainData, 1984)
 }

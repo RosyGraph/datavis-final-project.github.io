@@ -1,9 +1,10 @@
+const height = 400,
+  width = 600;
+const margin = { top: 20, bottom: 20, left: 30, right: 20 };
+const innerHeight = height - margin.top - margin.bottom,
+  innerWidth = width - margin.left - margin.right;
+
 function displayYear(data, year) {
-  const height = 400,
-    width = 600;
-  const margin = { top: 20, bottom: 20, left: 30, right: 20 };
-  const innerHeight = height - margin.top - margin.bottom,
-    innerWidth = width - margin.left - margin.right;
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
@@ -43,7 +44,7 @@ function displayYear(data, year) {
     .domain(grouped.map((g) => g[sort_by]));
   const svg = d3.select("#barchart-svg");
   svg
-    .append("g")
+    .select("#barchart-year")
     .selectAll("text")
     .data([year])
     .join("text")
@@ -51,26 +52,50 @@ function displayYear(data, year) {
     .attr("y", margin.top)
     .text((d) => d);
   svg
-    .append("g")
+    .select("#barchart-x-axis")
     .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
     .call(d3.axisBottom(x));
   svg
-    .append("g")
+    .select("#barchart-y-axis")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .call(d3.axisLeft(y));
   svg
-    .append("g")
+    .select("#barchart-content")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .selectAll("rect")
     .data(grouped)
-    .join("rect")
-    .attr("x", (d) => x(d[sort_by]))
-    .attr("y", (d) => y(d.sales))
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => y(0) - y(d.sales))
-    .attr("fill", (d) => color(d[sort_by]));
+    .join(
+      (enter) =>
+        enter
+          .append("rect")
+          .attr("x", (d) => x(d[sort_by]))
+          .attr("y", (d) => y(d.sales))
+          .attr("width", x.bandwidth())
+          .attr("height", (d) => y(0) - y(d.sales))
+          .attr("fill", (d) => color(d[sort_by])),
+
+      (update) =>
+        update
+          //.transition()
+          //.duration(ANIMATION_DURATION)
+          .attr("x", (d) => x(d[sort_by]))
+          .attr("y", (d) => y(d.sales))
+          .attr("width", x.bandwidth())
+          .attr("height", (d) => y(0) - y(d.sales))
+          .attr("fill", (d) => color(d[sort_by])),
+
+      (exit) =>
+        exit
+          //.transition()
+          //.duration(ANIMATION_DURATION)
+          .attr("width", 0)
+          .attr("height", 0)
+          .remove()
+    );
   console.log(grouped);
 }
+
+function updateBarChart() {}
 
 function groupByPlatform(data) {
   const platforms = Array.from(new Set(data.map((d) => d.Platform)));
