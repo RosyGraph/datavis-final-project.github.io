@@ -33,7 +33,7 @@ function startDisplayChain(data, years, color, i = 0) {
   const y = d3
     .scaleLinear()
     .range([innerHeight, 0])
-    .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
+    .domain([0, d3.max(grouped.map((g) => g.sales))]);
   const svg = d3.select("#barchart-svg");
   svg
     .selectAll("g.x-axis")
@@ -62,12 +62,27 @@ function startDisplayChain(data, years, color, i = 0) {
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .selectAll("rect")
     .data(grouped)
-    .join("rect")
-    .attr("width", x.bandwidth())
+    .join(
+      (enter) =>
+        enter
+          .append("rect")
+          .attr("x", (d) => x(d.platform))
+          .attr("fill", (d) => color(d.platform))
+          .attr("width", x.bandwidth()),
+      (update) =>
+        update
+          .transition("rects")
+          .attr("width", x.bandwidth())
+          .attr("height", (d) => y(0) - y(d.sales))
+          .attr("y", (d) => y(d.sales))
+          .attr("x", (d) => x(d.platform)),
+      (exit) => exit.transition("rects").attr("height", 0).style("opacity", 0)
+    )
     .attr("fill", (d) => color(d.platform))
-    .attr("y", (d) => y(d.sales))
-    .attr("height", (d) => y(0) - y(d.sales))
     .transition("rects")
+    .attr("width", x.bandwidth())
+    .attr("height", (d) => y(0) - y(d.sales))
+    .attr("y", (d) => y(d.sales))
     .attr("x", (d) => x(d.platform))
     .duration(2000)
     .on("end", () => {
