@@ -16,7 +16,31 @@
       <h1>Video Game Sales Exploration</h1>
     </header>
 
-    <div class="toolbox"></div>
+    <div class="toolbox">
+
+      <span>
+        <label>Sort By:</label>
+        <select id="sort_by_selection">
+          <option selected value="game">Game</option>
+          <option value="platform">Platform</option>
+          <option value="genre">Genre</option>
+          <option value="region">Region</option>
+          <option value="publisher">Publisher</option>
+        </select>
+      </span>
+      <span>
+        <label>Variable</label>
+        <select id="selected_variable">
+          <option value="game">Game</option>
+          <option selected value="platform">Platform</option>
+          <option value="genre">Genre</option>
+          <option value="region">Region</option>
+          <option value="publisher">Publisher</option>
+        </select>
+      </span>
+      </div>
+    <br />
+
     <div class="mainChart">
       <div id="bar-chart"></div>
     </div>

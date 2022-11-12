@@ -22,6 +22,15 @@ function displayYear(data, year) {
     .domain(grouped.map((g) => g.platform));
   const svg = d3.select("#barchart-svg");
   svg
+    .append('g')
+    .selectAll("text")
+    .data([year])
+    .join("text")
+    .attr("x", width - margin.left)
+    .attr("y", margin.top)
+    .text((d) => d)
+    .classed("label", true);
+  svg
     .append("g")
     .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
     .call(d3.axisBottom(x));
