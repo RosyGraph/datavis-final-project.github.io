@@ -12,29 +12,11 @@ function displayYear(data) {
   });
   const sort_by = d3.select("#sort_by_selection").property("value");
 
-  let grouped;
-
-  switch (sort_by) {
-    case "platform":
-      grouped = groupByPlatform(filtered);
-      break;
-
-    case "genre":
-      grouped = groupByGenre(filtered);
-      break;
-
-    case "name":
-      grouped = groupByName(filtered);
-      break;
-
-    case "publisher":
-      grouped = groupByPublisher(filtered);
-      break;
-  }
+  const grouped = groupByVariable(filtered, sort_by);
 
   const x = d3
     .scaleBand()
-    .domain(grouped.map((g) => g[sort_by]))
+    .domain(grouped.map((g) => g.key))
     .range([0, innerWidth])
     .padding(0.2);
   const y = d3
@@ -43,7 +25,7 @@ function displayYear(data) {
     .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
   const color = d3
     .scaleOrdinal(d3.schemeCategory10)
-    .domain(grouped.map((g) => g[sort_by]));
+    .domain(grouped.map((g) => g.key));
   const svg = d3.select("#barchart-svg");
   svg
     .select("#barchart-year")
@@ -70,21 +52,21 @@ function displayYear(data) {
       (enter) =>
         enter
           .append("rect")
-          .attr("x", (d) => x(d[sort_by]))
+          .attr("x", (d) => x(d.key))
           .attr("y", (d) => y(d.sales))
           .attr("width", x.bandwidth())
           .attr("height", (d) => y(0) - y(d.sales))
-          .attr("fill", (d) => color(d[sort_by])),
+          .attr("fill", (d) => color(d.key)),
 
       (update) =>
         update
           //.transition()
           //.duration(ANIMATION_DURATION)
-          .attr("x", (d) => x(d[sort_by]))
+          .attr("x", (d) => x(d.key))
           .attr("y", (d) => y(d.sales))
           .attr("width", x.bandwidth())
           .attr("height", (d) => y(0) - y(d.sales))
-          .attr("fill", (d) => color(d[sort_by])),
+          .attr("fill", (d) => color(d.key)),
 
       (exit) =>
         exit
@@ -99,58 +81,13 @@ function displayYear(data) {
 
 function updateBarChart() {}
 
-function groupByPlatform(data) {
-  const platforms = Array.from(new Set(data.map((d) => d.Platform)));
-  return platforms.map((platform) => {
+function groupByVariable(data, variable) {
+  const attributes = Array.from(new Set(data.map((d) => d[variable])));
+  return attributes.map((attribute) => {
     return {
-      platform: platform,
+      key: attribute,
       sales: data
-        .filter((d) => d.Platform === platform)
-        .map((d) => {
-          return !d.Global_Sales ? 0 : +d.Global_Sales;
-        })
-        .reduce((p, c) => p + c, 0),
-    };
-  });
-}
-
-function groupByGenre(data) {
-  const genres = Array.from(new Set(data.map((d) => d.Genre)));
-  return genres.map((genre) => {
-    return {
-      genre: genre,
-      sales: data
-        .filter((d) => d.Genre === genre)
-        .map((d) => {
-          return !d.Global_Sales ? 0 : +d.Global_Sales;
-        })
-        .reduce((p, c) => p + c, 0),
-    };
-  });
-}
-
-function groupByName(data) {
-  const names = Array.from(new Set(data.map((d) => d.Name)));
-  return names.map((name) => {
-    return {
-      name: name,
-      sales: data
-        .filter((d) => d.Name === name)
-        .map((d) => {
-          return !d.Global_Sales ? 0 : +d.Global_Sales;
-        })
-        .reduce((p, c) => p + c, 0),
-    };
-  });
-}
-
-function groupByPublisher(data) {
-  const publishers = Array.from(new Set(data.map((d) => d.Publisher)));
-  return publishers.map((publisher) => {
-    return {
-      publisher: publisher,
-      sales: data
-        .filter((d) => d.Publisher === publisher)
+        .filter((d) => d[variable] === attribute)
         .map((d) => {
           return !d.Global_Sales ? 0 : +d.Global_Sales;
         })
