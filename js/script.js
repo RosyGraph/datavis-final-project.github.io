@@ -1,6 +1,16 @@
-setup();
+let mainData;
+loadData();
+
+function loadData() {
+  d3.csv("./data/video_games_dataset.csv").then((data) => {
+    mainData = data;
+    setup();
+  });
+}
 
 function setup() {
+  document.querySelector('#sort_by_selection').addEventListener('change', changeSort);
+
   d3.select("#bar-chart")
     .append("svg")
     .attr("id", "barchart-svg")
@@ -12,13 +22,10 @@ function setup() {
     .append("g")
     .attr("id", "bar-chart")
     .attr("class", "bar-chart");
-  d3.csv("./data/video_games_dataset.csv").then((data) =>
-    displayYear(data, 1984)
-  );
+
+  displayYear(mainData, 1984)
 }
 
-function loadData() {
-  d3.csv("./data/video_games_dataset.csv").then((data) => {
-    console.log(data);
-  });
+function changeSort() {
+  displayYear(mainData, 1984);
 }
