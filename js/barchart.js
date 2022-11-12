@@ -4,7 +4,9 @@ const margin = { top: 20, bottom: 20, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
 
-function displayYear(data, year) {
+function displayYear(data) {
+  let year = parseInt(d3.select("#year_selection").property("value"));
+  
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });

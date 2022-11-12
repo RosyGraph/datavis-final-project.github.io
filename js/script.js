@@ -11,6 +11,7 @@ function loadData() {
 
 function setup() {
   document.querySelector('#sort_by_selection').addEventListener('change', changeSort);
+  document.querySelector('#year_selection').addEventListener('change', changeSort);
 
   d3.select("#barchart-div")
     .append("svg")
@@ -35,10 +36,10 @@ function setup() {
   .append("g")
   .attr("id", "barchart-content");
 
-  displayYear(mainData, 1984)
+  displayYear(mainData);
 }
 
 function changeSort() {
-  console.log("sort by has been changed");
-  displayYear(mainData, 1984);
+  console.log("something has been changed");
+  displayYear(mainData);
 }
