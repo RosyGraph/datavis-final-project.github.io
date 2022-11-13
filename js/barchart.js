@@ -1,16 +1,22 @@
-function displayYear(data, year) {
-  const height = 400,
-    width = 600;
-  const margin = { top: 20, bottom: 20, left: 30, right: 20 };
-  const innerHeight = height - margin.top - margin.bottom,
-    innerWidth = width - margin.left - margin.right;
+const height = 400,
+  width = 600;
+const margin = { top: 20, bottom: 20, left: 30, right: 20 };
+const innerHeight = height - margin.top - margin.bottom,
+  innerWidth = width - margin.left - margin.right;
+
+function displayYear(data) {
+  let year = parseInt(d3.select("#year_selection").property("value"));
+  
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
-  const grouped = groupByPlatform(filtered);
+  const sort_by = d3.select("#sort_by_selection").property("value");
+
+  const grouped = groupByVariable(filtered, sort_by);
+
   const x = d3
     .scaleBand()
-    .domain(grouped.map((g) => g.platform))
+    .domain(grouped.map((g) => g.key))
     .range([0, innerWidth])
     .padding(0.2);
   const y = d3
@@ -19,37 +25,69 @@ function displayYear(data, year) {
     .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
   const color = d3
     .scaleOrdinal(d3.schemeCategory10)
-    .domain(grouped.map((g) => g.platform));
+    .domain(grouped.map((g) => g.key));
   const svg = d3.select("#barchart-svg");
   svg
-    .append("g")
+    .select("#barchart-year")
+    .selectAll("text")
+    .data([year])
+    .join("text")
+    .attr("x", width - margin.left)
+    .attr("y", margin.top)
+    .text((d) => d);
+  svg
+    .select("#barchart-x-axis")
     .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
     .call(d3.axisBottom(x));
   svg
-    .append("g")
+    .select("#barchart-y-axis")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .call(d3.axisLeft(y));
   svg
-    .append("g")
+    .select("#barchart-content")
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .selectAll("rect")
     .data(grouped)
-    .join("rect")
-    .attr("x", (d) => x(d.platform))
-    .attr("y", (d) => y(d.sales))
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => y(0) - y(d.sales))
-    .attr("fill", (d) => color(d.platform));
+    .join(
+      (enter) =>
+        enter
+          .append("rect")
+          .attr("x", (d) => x(d.key))
+          .attr("y", (d) => y(d.sales))
+          .attr("width", x.bandwidth())
+          .attr("height", (d) => y(0) - y(d.sales))
+          .attr("fill", (d) => color(d.key)),
+
+      (update) =>
+        update
+          //.transition()
+          //.duration(ANIMATION_DURATION)
+          .attr("x", (d) => x(d.key))
+          .attr("y", (d) => y(d.sales))
+          .attr("width", x.bandwidth())
+          .attr("height", (d) => y(0) - y(d.sales))
+          .attr("fill", (d) => color(d.key)),
+
+      (exit) =>
+        exit
+          //.transition()
+          //.duration(ANIMATION_DURATION)
+          .attr("width", 0)
+          .attr("height", 0)
+          .remove()
+    );
   console.log(grouped);
 }
 
-function groupByPlatform(data) {
-  const platforms = Array.from(new Set(data.map((d) => d.Platform)));
-  return platforms.map((platform) => {
+function updateBarChart() {}
+
+function groupByVariable(data, variable) {
+  const attributes = Array.from(new Set(data.map((d) => d[variable])));
+  return attributes.map((attribute) => {
     return {
-      platform: platform,
+      key: attribute,
       sales: data
-        .filter((d) => d.Platform === platform)
+        .filter((d) => d[variable] === attribute)
         .map((d) => {
           return !d.Global_Sales ? 0 : +d.Global_Sales;
         })

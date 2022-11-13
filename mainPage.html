@@ -8,6 +8,10 @@
       svg.barchart g rect {
         filter: drop-shadow(8px 8px 6px rgba(26, 32, 44, 0.5));
       }
+      div.toolbox div {
+        width: 30%;
+        float: left;
+      }
     </style>
   </head>
 
@@ -16,9 +20,54 @@
       <h1>Video Game Sales Exploration</h1>
     </header>
 
-    <div class="toolbox"></div>
+    <div class="toolbox">
+      <div class="sort-by">
+        <span>
+          <label>Sort By:</label>
+          <select id="sort_by_selection">
+            <option value="Name">Name</option>
+            <option selected value="Platform">Platform</option>
+            <option value="Genre">Genre</option>
+            <!-- <option value="region">Region</option> -->
+            <option value="Publisher">Publisher</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="select-variables">
+        <span>
+          <input type="checkbox" id="games" name="games">
+          <label for="games">Games </label>
+          <input type="checkbox" id="platform" name="platform">
+          <label for="platform">Platform </label>
+          <input type="checkbox" id="genre" name="genre">
+          <label for="genre">Genre </label>
+          <input type="checkbox" id="region" name="region">
+          <label for="region">Region </label>
+          <input type="checkbox" id="publisher" name="publisher">
+          <label for="publisher">Publisher </label>
+        </span>
+      </div>
+
+      <div class="select-timespan">
+        <span>
+          <label>Choose Year:</label>
+          <select id="year_selection">
+            <option selected value="1984">1984</option>
+            <option value="1995">1995</option>
+            <option value="2000">2000</option>
+            <option value="2010">2010</option>
+          </select>
+        </span>
+      </div>
+
+     
+
+    </div>
+    <br style="clear: left;" />
+
     <div class="mainChart">
-      <div id="bar-chart"></div>
+      <div id="barchart-div"></div>
     </div>
 
     <script src="js/barchart.js"></script>
