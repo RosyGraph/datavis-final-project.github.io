@@ -190,3 +190,33 @@ function groupByGenre(data) {
     };
   });
 }
+
+function groupByName(data) {
+  const names = Array.from(new Set(data.map((d) => d.Name)));
+  return names.map((name) => {
+    return {
+      name: name,
+      sales: data
+        .filter((d) => d.Name === name)
+        .map((d) => {
+          return !d.Global_Sales ? 0 : +d.Global_Sales;
+        })
+        .reduce((p, c) => p + c, 0),
+    };
+  });
+}
+
+function groupByPublisher(data) {
+  const publishers = Array.from(new Set(data.map((d) => d.Publisher)));
+  return publishers.map((publisher) => {
+    return {
+      publisher: publisher,
+      sales: data
+        .filter((d) => d.Publisher === publisher)
+        .map((d) => {
+          return !d.Global_Sales ? 0 : +d.Global_Sales;
+        })
+        .reduce((p, c) => p + c, 0),
+    };
+  });
+}
