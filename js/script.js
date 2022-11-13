@@ -4,7 +4,6 @@ loadData();
 function loadData() {
   d3.csv("./data/video_games_dataset.csv").then((data) => {
     mainData = data;
-    console.log(mainData);
     setup();
   });
 }

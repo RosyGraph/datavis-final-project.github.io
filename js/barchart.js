@@ -175,3 +175,18 @@ function groupByVariable(data, variable) {
     };
   });
 }
+
+function groupByGenre(data) {
+  const genres = Array.from(new Set(data.map((d) => d.Genre)));
+  return genres.map((genre) => {
+    return {
+      genre: genre,
+      sales: data
+        .filter((d) => d.Genre === genre)
+        .map((d) => {
+          return !d.Global_Sales ? 0 : +d.Global_Sales;
+        })
+        .reduce((p, c) => p + c, 0),
+    };
+  });
+}
