@@ -90,10 +90,8 @@ function startDisplayChain(data, years, color, i = 0) {
     });
   return data;
 }
-
 function displayYear(data) {
   let year = parseInt(d3.select("#year_selection").property("value"));
-
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
