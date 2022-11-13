@@ -10,8 +10,12 @@ function loadData() {
 }
 
 function setup() {
-  document.querySelector('#sort_by_selection').addEventListener('change', changeSort);
-  document.querySelector('#year_selection').addEventListener('change', changeSort);
+  document
+    .querySelector("#sort_by_selection")
+    .addEventListener("change", changeSort);
+  document
+    .querySelector("#year_selection")
+    .addEventListener("change", changeSort);
 
   d3.select("#barchart-div")
     .append("svg")
@@ -20,21 +24,13 @@ function setup() {
     .attr("height", 400)
     .attr("width", 600);
 
-  d3.select("#barchart-svg")
-  .append("g")
-  .attr("id", "barchart-year");
+  d3.select("#barchart-svg").append("g").attr("id", "barchart-year");
 
-  d3.select("#barchart-svg")
-  .append("g")
-  .attr("id", "barchart-x-axis");
+  d3.select("#barchart-svg").append("g").attr("id", "barchart-x-axis");
 
-  d3.select("#barchart-svg")
-  .append("g")
-  .attr("id", "barchart-y-axis");
+  d3.select("#barchart-svg").append("g").attr("id", "barchart-y-axis");
 
-  d3.select("#barchart-svg")
-  .append("g")
-  .attr("id", "barchart-content");
+  d3.select("#barchart-svg").append("g").attr("id", "barchart-content");
 
   displayYear(mainData);
 }
