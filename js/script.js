@@ -25,11 +25,8 @@ function setup() {
     .attr("width", 600);
 
   d3.select("#barchart-svg").append("g").attr("id", "barchart-year");
-
   d3.select("#barchart-svg").append("g").attr("id", "barchart-x-axis");
-
   d3.select("#barchart-svg").append("g").attr("id", "barchart-y-axis");
-
   d3.select("#barchart-svg").append("g").attr("id", "barchart-content");
 
   displayYear(mainData);

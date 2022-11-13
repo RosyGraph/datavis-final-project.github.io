@@ -6,7 +6,18 @@ const innerHeight = height - margin.top - margin.bottom,
 
 function displayYear(data) {
   let year = parseInt(d3.select("#year_selection").property("value"));
-  
+
+  function animateBarchart(data) {
+    const yearRange = d3.extent(
+      data.map((d) => {
+        return +d.Year;
+      })
+    );
+    displayYear(data, yearRange[0]);
+    displayYear(data, yearRange[1]);
+    return data;
+  }
+
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
@@ -36,46 +47,35 @@ function displayYear(data) {
     .attr("y", margin.top)
     .text((d) => d);
   svg
-    .select("#barchart-x-axis")
+    .selectAll("g.x-axis")
+    .data([data])
+    .join("g")
+    .classed("x-axis", true)
     .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
     .call(d3.axisBottom(x));
   svg
-    .select("#barchart-y-axis")
+    .selectAll("g.y-axis")
+    .data([data])
+    .join("g")
+    .classed("y-axis", true)
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .call(d3.axisLeft(y));
   svg
-    .select("#barchart-content")
+    .selectAll("g.rects")
+    .data([data])
+    .join("g")
+    .classed("rects", true)
     .attr("transform", `translate(${margin.left}, ${margin.top})`)
     .selectAll("rect")
     .data(grouped)
-    .join(
-      (enter) =>
-        enter
-          .append("rect")
-          .attr("x", (d) => x(d.key))
-          .attr("y", (d) => y(d.sales))
-          .attr("width", x.bandwidth())
-          .attr("height", (d) => y(0) - y(d.sales))
-          .attr("fill", (d) => color(d.key)),
-
-      (update) =>
-        update
-          //.transition()
-          //.duration(ANIMATION_DURATION)
-          .attr("x", (d) => x(d.key))
-          .attr("y", (d) => y(d.sales))
-          .attr("width", x.bandwidth())
-          .attr("height", (d) => y(0) - y(d.sales))
-          .attr("fill", (d) => color(d.key)),
-
-      (exit) =>
-        exit
-          //.transition()
-          //.duration(ANIMATION_DURATION)
-          .attr("width", 0)
-          .attr("height", 0)
-          .remove()
-    );
+    .join("rect")
+    .attr("x", (d) => x(d.key))
+    .attr("width", x.bandwidth())
+    .attr("fill", (d) => color(d.key))
+    .transition()
+    .duration(1000)
+    .attr("y", (d) => y(d.sales))
+    .attr("height", (d) => y(0) - y(d.sales));
   console.log(grouped);
 }
 
