@@ -6,7 +6,7 @@
     <script src="https://d3js.org/d3.v7.js"></script>
     <style>
       svg.barchart g rect {
-        filter: drop-shadow(8px 8px 6px rgba(26, 32, 44, 0.5));
+        filter: drop-shadow(2px 2px 6px rgba(26, 32, 44, 0.5));
       }
       div.toolbox div {
         width: 30%;
@@ -36,15 +36,15 @@
 
       <div class="select-variables">
         <span>
-          <input type="checkbox" id="games" name="games">
+          <input type="checkbox" id="games" name="games" />
           <label for="games">Games </label>
-          <input type="checkbox" id="platform" name="platform">
+          <input type="checkbox" id="platform" name="platform" />
           <label for="platform">Platform </label>
-          <input type="checkbox" id="genre" name="genre">
+          <input type="checkbox" id="genre" name="genre" />
           <label for="genre">Genre </label>
-          <input type="checkbox" id="region" name="region">
+          <input type="checkbox" id="region" name="region" />
           <label for="region">Region </label>
-          <input type="checkbox" id="publisher" name="publisher">
+          <input type="checkbox" id="publisher" name="publisher" />
           <label for="publisher">Publisher </label>
         </span>
       </div>
@@ -60,11 +60,8 @@
           </select>
         </span>
       </div>
-
-     
-
     </div>
-    <br style="clear: left;" />
+    <br style="clear: left" />
 
     <div class="mainChart">
       <div id="barchart-div"></div>
