@@ -38,7 +38,7 @@
         <span>
           <input type="checkbox" id="games" name="games" />
           <label for="games">Games </label>
-          <input type="checkbox" id="platform" name="platform" />
+          <input type="checkbox" id="platform" name="platform" checked />
           <label for="platform">Platform </label>
           <input type="checkbox" id="genre" name="genre" />
           <label for="genre">Genre </label>
@@ -53,16 +53,17 @@
         <span>
           <label>Choose Year:</label>
           <select id="year_selection">
-            <option selected value="1984">1984</option>
+            <option value="1984">1984</option>
             <option value="1995">1995</option>
             <option value="2000">2000</option>
-            <option value="2010">2010</option>
+            <option selected value="2010">2010</option>
           </select>
         </span>
       </div>
     </div>
     <br style="clear: left" />
 
+    <div id="legend-div"></div>
     <div class="mainChart">
       <div id="barchart-div"></div>
     </div>
