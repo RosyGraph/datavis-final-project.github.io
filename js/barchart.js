@@ -110,6 +110,14 @@ function displayYear(data) {
     .domain(grouped.map((g) => g.key));
   const svg = d3.select("#barchart-svg");
   svg
+    .select("#barchart-title")
+    .selectAll("text")
+    .data([sort_by])
+    .join("text")
+    .attr("x", width / 2)
+    .attr("y", margin.top)
+    .text((d) => d);
+  svg
     .select("#barchart-year")
     .selectAll("text")
     .data([year])

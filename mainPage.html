@@ -36,15 +36,16 @@
 
       <div class="select-variables">
         <span>
-          <input type="checkbox" id="games" name="games" />
+          <label>Variables:</label>
+          <input type="checkbox" id="games" name="variable" />
           <label for="games">Games </label>
-          <input type="checkbox" id="platform" name="platform" checked />
+          <input type="checkbox" id="platform" name="variable" checked />
           <label for="platform">Platform </label>
-          <input type="checkbox" id="genre" name="genre" />
+          <input type="checkbox" id="genre" name="variable" />
           <label for="genre">Genre </label>
-          <input type="checkbox" id="region" name="region" />
+          <input type="checkbox" id="region" name="variable" />
           <label for="region">Region </label>
-          <input type="checkbox" id="publisher" name="publisher" />
+          <input type="checkbox" id="publisher" name="variable" />
           <label for="publisher">Publisher </label>
         </span>
       </div>
@@ -64,6 +65,7 @@
     <br style="clear: left" />
 
     <div id="legend-div"></div>
+    
     <div class="mainChart">
       <div id="barchart-div"></div>
     </div>
