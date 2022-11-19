@@ -97,9 +97,6 @@ function drawCharts(data, selectedVariables) {
   });
   const sort_by = d3.select("#sort_by_selection").property("value");
 
-  console.log("the filtered data is: ");
-  console.log(filtered);
-
   addLegend(Array.from(new Set(filtered.map((d) => d[sort_by]))));
 
   selectedVariables.forEach((element) => {
@@ -111,17 +108,19 @@ function drawCharts(data, selectedVariables) {
       .scaleBand()
       .domain(xDomain)
       .range([0, innerWidth])
-      .padding(.1);
+      .padding(.2);
 
       let keys = Array.from(new Set(filtered.map((d) => d[sort_by])));
-      console.log("the keys variable is:");
-      console.log(keys);
+
+    // only rectangles that exist in the (specific tick on the x-axis) is the domain
+    //console.log(groupedData.map(key => ({ key, value: d[key] })));
+    //data is groupedData .data(d => keys.map(key => ({ key, value: d[key] })))
     
     let x1Scale = d3
       .scaleBand()
       .domain(keys)
       .range([0, xScale.bandwidth()])
-      .padding(0.05)
+      //.padding(0.1)
 
     let yScale = d3
       .scaleLinear()
@@ -191,8 +190,14 @@ function drawCharts(data, selectedVariables) {
     .selectAll("rect")
     .data(d => keys.map(key => ({ key, value: d[key] })))
     .join('rect')
-    .attr("x", d => x1Scale(d.key)) // use the x1 variable to place the grouped bars
-    .attr("y", d => yScale(d.value)) // draw the height of the barse using the data from the Male/Female keys as the height value
+    .attr("x", d => {
+      if (d.value === undefined)
+      {
+        d.value = .5;
+      }
+      return x1Scale(d.key) + 30;
+    }) // use the x1 variable to place the grouped bars
+    .attr("y", d => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
     .attr("width", x1Scale.bandwidth()) // bar is the width defined by the x1 variable
     .attr("height", d => yScale(0) - yScale(d.value))
     .attr("fill", d => color(d.key)); // color each bar according to its key value as defined by the color variable
@@ -208,8 +213,6 @@ function groupByVariable(data, sort_by, variable) {
     (d) => d[variable],
     (d) => d[sort_by]
   );
-  console.log("rolled_data is ");
-  console.log(rolled_data);
 
   let aggregate = Array.from(rolled_data, ([variable_name, count]) => {
     const obj = {};
