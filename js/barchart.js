@@ -87,7 +87,7 @@ function startDisplayChain(data, years, color, i = 0) {
     });
   return data;
 }
-function displayYear(data) {
+function drawCharts(data, selectedVariables) {
   let year = parseInt(d3.select("#year_selection").property("value"));
   const filtered = data.filter((d) => {
     return +d.Year === year;
@@ -95,6 +95,10 @@ function displayYear(data) {
   const sort_by = d3.select("#sort_by_selection").property("value");
 
   const grouped = groupByVariable(filtered, sort_by);
+  console.log("the grouped data is: ");
+  console.log(grouped);
+
+  addLegend(grouped.map((d) => d.key));
 
   const x = d3
     .scaleBand()
@@ -108,11 +112,31 @@ function displayYear(data) {
   const color = d3
     .scaleOrdinal(d3.schemeCategory10)
     .domain(grouped.map((g) => g.key));
-  const svg = d3.select("#barchart-svg");
-  svg
+
+  // clear existing charts
+  d3.select("#barchart-div").selectAll("*").remove();
+
+  // loops through all selected variables and creates a chart
+  if (selectedVariables) {
+    selectedVariables.forEach((element) => {
+
+      let svg = d3.select("#barchart-div")
+        .append("svg")
+        .attr("id", element + "-barchart-svg")
+        .classed("barchart", true)
+        .attr("height", 400)
+        .attr("width", 600);
+
+      svg.append("g").attr("id", "barchart-title");
+      svg.append("g").attr("id", "barchart-year");
+      svg.append("g").attr("id", "barchart-x-axis");
+      svg.append("g").attr("id", "barchart-y-axis");
+      svg.append("g").attr("id", "barchart-content");
+
+      svg
     .select("#barchart-title")
     .selectAll("text")
-    .data([sort_by])
+    .data([element])
     .join("text")
     .attr("x", width / 2)
     .attr("y", margin.top)
@@ -122,11 +146,11 @@ function displayYear(data) {
     .selectAll("text")
     .data([year])
     .join("text")
-    .attr("x", width - margin.left)
+    .attr("x", width - margin.right - 20)
     .attr("y", margin.top)
     .text((d) => d);
   svg
-    .selectAll("g.x-axis")
+    .selectAll("#barchart-x-axis")
     .data([year])
     .join("g")
     .classed("x-axis", true)
@@ -153,8 +177,9 @@ function displayYear(data) {
     .duration(1000)
     .attr("y", (d) => y(d.sales))
     .attr("height", (d) => y(0) - y(d.sales));
-    
-    addLegend(grouped.map(d => d.key));
+    });
+  } else console.log("empty thing got passed");
+
   return data;
 }
 
@@ -173,52 +198,40 @@ function groupByVariable(data, variable) {
   });
 }
 
-function addLegend(data)
-{
+function addLegend(data) {
   // color scale
-  const color = d3
-    .scaleOrdinal(d3.schemeCategory10)
-    .domain(data);
+  const color = d3.scaleOrdinal(d3.schemeCategory10).domain(data);
   const legend = d3.select("#legend-svg");
+
   // clears legend
   legend.selectAll("*").remove();
-  // adds legend above graph
+
   let size = 20;
 
-  // adds squares
   legend
-    .selectAll("legendSquare")
+    .selectAll("g")
     .data(data)
-    .join(
-      (enter) =>
-        enter
-          .append("rect")
-          .attr("x", 50)
-          .attr("y", (d, i) => 10 + i * (size + 5))
-          .attr("width", size)
-          .attr("height", size)
-          .style("fill", (d) => color(d)),
-    );
+    .join("rect")
+    .attr("x", 50)
+    .attr("y", (d, i) => 10 + i * (size + 5))
+    .attr("width", size)
+    .attr("height", size)
+    .style("fill", (d) => color(d));
 
-  // adds text
   legend
-    .selectAll("mylabels")
+    .selectAll("g")
     .data(data)
-    .join(
-      (enter) =>
-        enter
-          .append("text")
-          .attr("x", 50 + size * 1.2)
-          .attr("y", function (d, i) {
-            return 10 + i * (size + 5) + size / 2;
-          })
-          .style("fill", function (d) {
-            return color(d);
-          })
-          .text(function (d) {
-            return d;
-          })
-          .attr("text-anchor", "left")
-          .style("alignment-baseline", "middle")
-    );
+    .join("text")
+    .attr("x", 50 + size * 1.2)
+    .attr("y", function (d, i) {
+      return 10 + i * (size + 5) + size / 2;
+    })
+    .style("fill", function (d) {
+      return color(d);
+    })
+    .text(function (d) {
+      return d;
+    })
+    .attr("text-anchor", "left")
+    .style("alignment-baseline", "middle");
 }

@@ -10,6 +10,14 @@ function loadData() {
 }
 
 function setup() {
+  // add legend svg
+  d3.select("#legend-div")
+    .append("svg")
+    .attr("id", "legend-svg")
+    .classed("legend", true)
+    .attr("height", 200)
+    .attr("width", 600);
+
   // add event listeners to objects in the toolbox
   document
     .querySelector("#sort_by_selection")
@@ -22,42 +30,27 @@ function setup() {
   let checkboxes = document.querySelectorAll(
     "input[type=checkbox][name=variable]"
   );
-  let enabledSettings = [];
+
   // Use Array.forEach to add an event listener to each checkbox.
   checkboxes.forEach(function (checkbox) {
     checkbox.addEventListener("change", function () {
-      enabledSettings = Array.from(checkboxes) // Convert checkboxes to an array to use filter and map.
-        .filter((i) => i.checked) // Use Array.filter to remove unchecked checkboxes.
-        .map((i) => i.id); // Use Array.map to extract only the checkbox values from the array of objects.
-      console.log(enabledSettings);
+      changeSort();
     });
   });
 
-  d3.select("#legend-div")
-    .append("svg")
-    .attr("id", "legend-svg")
-    .classed("legend", true)
-    .attr("height", 200)
-    .attr("width", 600);
-
-  d3.select("#barchart-div")
-    .append("svg")
-    .attr("id", "barchart-svg")
-    .classed("barchart", true)
-    .attr("height", 400)
-    .attr("width", 600);
-
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-title");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-year");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-x-axis");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-y-axis");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-content");
-
-  displayYear(mainData);
+  // platform is defualt value selected
+  drawCharts(mainData, ["platform"]);
 }
 
-function addChart() {}
-
 function changeSort() {
-  displayYear(mainData);
+  // Select all checkboxes with the name 'variable' using querySelectorAll.
+  let checkboxes = document.querySelectorAll(
+    "input[type=checkbox][name=variable]"
+  );
+  let enabledVariables = [];
+  enabledVariables = Array.from(checkboxes) // Convert checkboxes to an array to use filter and map.
+    .filter((i) => i.checked) // Use Array.filter to remove unchecked checkboxes.
+    .map((i) => i.id); // Use Array.map to extract only the checkbox values from the array of objects.
+
+  drawCharts(mainData, enabledVariables);
 }
