@@ -39,7 +39,7 @@ function setup() {
   });
 
   // platform is defualt value selected
-  drawCharts(mainData, ["platform"]);
+  drawCharts(mainData, ["Platform"]);
 }
 
 function changeSort() {
