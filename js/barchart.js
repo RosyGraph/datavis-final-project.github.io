@@ -88,114 +88,138 @@ function startDisplayChain(data, years, color, i = 0) {
   return data;
 }
 function drawCharts(data, selectedVariables) {
+  // clear existing charts
+  d3.select("#barchart-div").selectAll("*").remove();
+
   let year = parseInt(d3.select("#year_selection").property("value"));
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
   const sort_by = d3.select("#sort_by_selection").property("value");
 
-  const grouped = groupByVariable(filtered, sort_by);
-  console.log("the grouped data is: ");
-  console.log(grouped);
+  console.log("the filtered data is: ");
+  console.log(filtered);
 
-  addLegend(grouped.map((d) => d.key));
+  addLegend(Array.from(new Set(filtered.map((d) => d[sort_by]))));
 
-  const x = d3
-    .scaleBand()
-    .domain(grouped.map((g) => g.key))
-    .range([0, innerWidth])
-    .padding(0.2);
-  const y = d3
-    .scaleLinear()
-    .range([innerHeight, 0])
-    .domain([0, Math.ceil(d3.max(grouped.map((g) => g.sales)))]);
-  const color = d3
-    .scaleOrdinal(d3.schemeCategory10)
-    .domain(grouped.map((g) => g.key));
+  selectedVariables.forEach((element) => {
+    let groupedData = groupByVariable(filtered, sort_by, element);
 
-  // clear existing charts
-  d3.select("#barchart-div").selectAll("*").remove();
+    let xDomain = groupedData.map(d => d[element]).sort();
+    
+    let xScale = d3
+      .scaleBand()
+      .domain(xDomain)
+      .range([0, innerWidth])
+      .padding(.1);
 
-  // loops through all selected variables and creates a chart
-  if (selectedVariables) {
-    selectedVariables.forEach((element) => {
+      let keys = Array.from(new Set(filtered.map((d) => d[sort_by])));
+      console.log("the keys variable is:");
+      console.log(keys);
+    
+    let x1Scale = d3
+      .scaleBand()
+      .domain(keys)
+      .range([0, xScale.bandwidth()])
+      .padding(0.05)
 
-      let svg = d3.select("#barchart-div")
-        .append("svg")
-        .attr("id", element + "-barchart-svg")
-        .classed("barchart", true)
-        .attr("height", 400)
-        .attr("width", 600);
+    let yScale = d3
+      .scaleLinear()
+      .range([innerHeight, 0])
+      .domain([0, d3.max(groupedData, d => d3.max(keys, key => d[key]))]) // in each key, look for the maximum number
 
-      svg.append("g").attr("id", "barchart-title");
-      svg.append("g").attr("id", "barchart-year");
-      svg.append("g").attr("id", "barchart-x-axis");
-      svg.append("g").attr("id", "barchart-y-axis");
-      svg.append("g").attr("id", "barchart-content");
+    let color = d3
+      .scaleOrdinal(d3.schemeCategory10)
+      .domain(keys);
+
+    // loops through all selected variables and creates a chart
+    let svg = d3
+      .select("#barchart-div")
+      .append("svg")
+      .attr("id", element + "-barchart-svg")
+      .classed("barchart", true)
+      .attr("height", 400)
+      .attr("width", 600);
+
+    svg.append("g").attr("id", "barchart-title");
+    svg.append("g").attr("id", "barchart-year");
+    svg.append("g").attr("id", "barchart-x-axis");
+    svg.append("g").attr("id", "barchart-y-axis");
+    svg.append("g").attr("id", "barchart-content");
+
+    svg
+      .select("#barchart-title")
+      .selectAll("text")
+      .data([element])
+      .join("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top)
+      .text((d) => d);
+    svg
+      .select("#barchart-year")
+      .selectAll("text")
+      .data([year])
+      .join("text")
+      .attr("x", width - margin.right - 20)
+      .attr("y", margin.top)
+      .text((d) => d);
+    svg
+      .selectAll("#barchart-x-axis")
+      .data([year])
+      .join("g")
+      .classed("x-axis", true)
+      .attr(
+        "transform",
+        `translate(${margin.left}, ${innerHeight + margin.top})`
+      )
+      .transition("x-axis")
+      .duration(1000)
+      .call(d3.axisBottom(xScale));
+    svg
+      .select("#barchart-y-axis")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
+      .transition("y-axis")
+      .duration(1000)
+      .call(d3.axisLeft(yScale));
 
       svg
-    .select("#barchart-title")
-    .selectAll("text")
-    .data([element])
-    .join("text")
-    .attr("x", width / 2)
-    .attr("y", margin.top)
-    .text((d) => d);
-  svg
-    .select("#barchart-year")
-    .selectAll("text")
-    .data([year])
-    .join("text")
-    .attr("x", width - margin.right - 20)
-    .attr("y", margin.top)
-    .text((d) => d);
-  svg
-    .selectAll("#barchart-x-axis")
-    .data([year])
-    .join("g")
-    .classed("x-axis", true)
-    .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
-    .transition("x-axis")
-    .duration(1000)
-    .call(d3.axisBottom(x));
-  svg
-    .select("#barchart-y-axis")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
-    .transition("y-axis")
-    .duration(1000)
-    .call(d3.axisLeft(y));
-  svg
     .select("#barchart-content")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
+    .selectAll("g")
+    .data(groupedData)
+    .join("g")
+    .attr("transform", d => `translate(${xScale(d[element])},0)`) // place each bar along the x-axis at the place defined by the xScale variable
     .selectAll("rect")
-    .data(grouped)
-    .join("rect")
-    .attr("x", (d) => x(d.key))
-    .attr("width", x.bandwidth())
-    .attr("fill", (d) => color(d.key))
-    .transition()
-    .duration(1000)
-    .attr("y", (d) => y(d.sales))
-    .attr("height", (d) => y(0) - y(d.sales));
-    });
-  } else console.log("empty thing got passed");
+    .data(d => keys.map(key => ({ key, value: d[key] })))
+    .join('rect')
+    .attr("x", d => x1Scale(d.key)) // use the x1 variable to place the grouped bars
+    .attr("y", d => yScale(d.value)) // draw the height of the barse using the data from the Male/Female keys as the height value
+    .attr("width", x1Scale.bandwidth()) // bar is the width defined by the x1 variable
+    .attr("height", d => yScale(0) - yScale(d.value))
+    .attr("fill", d => color(d.key)); // color each bar according to its key value as defined by the color variable
+  });
 
   return data;
 }
 
-function groupByVariable(data, variable) {
-  const attributes = Array.from(new Set(data.map((d) => d[variable])));
-  return attributes.map((attribute) => {
-    return {
-      key: attribute,
-      sales: data
-        .filter((d) => d[variable] === attribute)
-        .map((d) => {
-          return !d.Global_Sales ? 0 : +d.Global_Sales;
-        })
-        .reduce((p, c) => p + c, 0),
-    };
+function groupByVariable(data, sort_by, variable) {
+  let rolled_data = d3.rollup(
+    data,
+    (v) => d3.sum(v, (d) => d.Global_Sales),
+    (d) => d[variable],
+    (d) => d[sort_by]
+  );
+  console.log("rolled_data is ");
+  console.log(rolled_data);
+
+  let aggregate = Array.from(rolled_data, ([variable_name, count]) => {
+    const obj = {};
+    for (const [sort_by, num] of count) {
+      obj[variable] = variable_name;
+      obj[sort_by] = num;
+    }
+    return obj;
   });
+  return aggregate;
 }
 
 function addLegend(data) {
