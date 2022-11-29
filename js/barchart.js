@@ -240,7 +240,7 @@ function addLegend(data) {
     .data(data)
     .join("rect")
     .attr("x", 50)
-    .attr("y", (d, i) => 10 + i * (size + 5))
+    .attr("y", (_, i) => 10 + i * (size + 5))
     .attr("width", size)
     .attr("height", size)
     .style("fill", (d) => color(d));
@@ -250,7 +250,7 @@ function addLegend(data) {
     .data(data)
     .join("text")
     .attr("x", 50 + size * 1.2)
-    .attr("y", function (d, i) {
+    .attr("y", function (_, i) {
       return 10 + i * (size + 5) + size / 2;
     })
     .style("fill", function (d) {
