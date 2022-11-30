@@ -24,7 +24,7 @@
       <div class="sort-by">
         <span>
           <label>Sort By:</label>
-          <select id="sort_by_selection">
+          <select id="sort-by-selection">
             <option value="Name">Name</option>
             <option selected value="Platform">Platform</option>
             <option value="Genre">Genre</option>
@@ -36,15 +36,16 @@
 
       <div class="select-variables">
         <span>
-          <input type="checkbox" id="games" name="games" />
+          <label>Variables:</label>
+          <input type="checkbox" id="Name" name="variable" />
           <label for="games">Games </label>
-          <input type="checkbox" id="platform" name="platform" />
+          <input type="checkbox" id="Platform" name="variable" checked/>
           <label for="platform">Platform </label>
-          <input type="checkbox" id="genre" name="genre" />
+          <input type="checkbox" id="Genre" name="variable" checked/>
           <label for="genre">Genre </label>
-          <input type="checkbox" id="region" name="region" />
-          <label for="region">Region </label>
-          <input type="checkbox" id="publisher" name="publisher" />
+          <!-- <input type="checkbox" id="Region" name="variable" />
+          <label for="region">Region </label> -->
+          <input type="checkbox" id="Publisher" name="variable" checked/>
           <label for="publisher">Publisher </label>
         </span>
       </div>
@@ -52,17 +53,20 @@
       <div class="select-timespan">
         <span>
           <label>Choose Year:</label>
-          <select id="year_selection">
-            <option selected value="1984">1984</option>
+          <select id="year-selection">
+            <option value="1984">1984</option>
             <option value="1995">1995</option>
-            <option value="2000">2000</option>
             <option value="2010">2010</option>
+            <option selected value="2012">2012</option>
+            <option value="2015">2015</option>
           </select>
         </span>
       </div>
     </div>
     <br style="clear: left" />
 
+    <div id="legend-div"></div>
+    
     <div class="mainChart">
       <div id="barchart-div"></div>
     </div>

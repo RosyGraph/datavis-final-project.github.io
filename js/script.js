@@ -10,29 +10,48 @@ function loadData() {
 }
 
 function setup() {
-  document
-    .querySelector("#sort_by_selection")
-    .addEventListener("change", changeSort);
-  document
-    .querySelector("#year_selection")
-    .addEventListener("change", changeSort);
-
-  d3.select("#barchart-div")
+  // add legend svg
+  d3.select("#legend-div")
     .append("svg")
-    .attr("id", "barchart-svg")
-    .classed("barchart", true)
-    .attr("height", 400)
+    .attr("id", "legend-svg")
+    .classed("legend", true)
+    .attr("height", 200)
     .attr("width", 600);
 
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-year");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-x-axis");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-y-axis");
-  d3.select("#barchart-svg").append("g").attr("id", "barchart-content");
+  // add event listeners to objects in the toolbox
+  document
+    .querySelector("#sort-by-selection")
+    .addEventListener("change", changeSort);
+  document
+    .querySelector("#year-selection")
+    .addEventListener("change", changeSort);
 
-  displayYear(mainData);
+  // Select all checkboxes with the name 'variable' using querySelectorAll.
+  let checkboxes = document.querySelectorAll(
+    "input[type=checkbox][name=variable]"
+  );
+
+  // Use Array.forEach to add an event listener to each checkbox.
+  checkboxes.forEach(function (checkbox) {
+    checkbox.addEventListener("change", function () {
+      changeSort();
+    });
+  });
+
+  // platform, genre, and publisher are defualt values selected
+  changeSort();
 }
 
+// Called when sort by, year, or variables change
 function changeSort() {
-  console.log("something has been changed");
-  displayYear(mainData);
+  // Select all checkboxes with the name 'variable' using querySelectorAll.
+  let checkboxes = document.querySelectorAll(
+    "input[type=checkbox][name=variable]"
+  );
+  let enabledVariables = [];
+  enabledVariables = Array.from(checkboxes) // Convert checkboxes to an array to use filter and map.
+    .filter((i) => i.checked) // Use Array.filter to remove unchecked checkboxes.
+    .map((i) => i.id); // Use Array.map to extract only the checkbox values from the array of objects.
+
+  drawCharts(mainData, enabledVariables);
 }
