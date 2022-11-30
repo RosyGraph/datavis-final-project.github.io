@@ -38,10 +38,11 @@ function setup() {
     });
   });
 
-  // platform is defualt value selected
+  // platform, genre, and publisher are defualt values selected
   changeSort();
 }
 
+// Called when sort by, year, or variables change
 function changeSort() {
   // Select all checkboxes with the name 'variable' using querySelectorAll.
   let checkboxes = document.querySelectorAll(

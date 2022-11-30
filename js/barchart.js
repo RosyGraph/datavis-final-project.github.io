@@ -99,39 +99,27 @@ function drawCharts(data, selectedVariables) {
 
   addLegend(Array.from(new Set(filtered.map((d) => d[sort_by]))));
 
+  // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
     let groupedData = groupByVariable(filtered, sort_by, element);
 
-    let xDomain = groupedData.map(d => d[element]).sort();
-    
+    let xDomain = groupedData.map((d) => d[element]).sort();
+
     let xScale = d3
       .scaleBand()
       .domain(xDomain)
       .range([0, innerWidth])
-      .padding(.2);
+      .padding(0.2);
 
-      let keys = Array.from(new Set(filtered.map((d) => d[sort_by])));
-
-    // only rectangles that exist in the (specific tick on the x-axis) is the domain
-    //console.log(groupedData.map(key => ({ key, value: d[key] })));
-    //data is groupedData .data(d => keys.map(key => ({ key, value: d[key] })))
-    
-    let x1Scale = d3
-      .scaleBand()
-      .domain(keys)
-      .range([0, xScale.bandwidth()])
-      //.padding(0.1)
+    let keys = Array.from(new Set(filtered.map((d) => d[sort_by])));
 
     let yScale = d3
       .scaleLinear()
       .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, d => d3.max(keys, key => d[key]))]) // in each key, look for the maximum number
+      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]); // in each key, look for the maximum number
 
-    let color = d3
-      .scaleOrdinal(d3.schemeCategory10)
-      .domain(keys);
+    let color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
 
-    // loops through all selected variables and creates a chart
     let svg = d3
       .select("#barchart-div")
       .append("svg")
@@ -181,26 +169,25 @@ function drawCharts(data, selectedVariables) {
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
-      svg
-    .select("#barchart-content")
-    .selectAll("g")
-    .data(groupedData)
-    .join("g")
-    .attr("transform", d => `translate(${xScale(d[element])},0)`) // place each bar along the x-axis at the place defined by the xScale variable
-    .selectAll("rect")
-    .data(d => keys.map(key => ({ key, value: d[key] })))
-    .join('rect')
-    .attr("x", d => {
-      if (d.value === undefined)
-      {
-        d.value = .5;
-      }
-      return x1Scale(d.key) + 30;
-    }) // use the x1 variable to place the grouped bars
-    .attr("y", d => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
-    .attr("width", x1Scale.bandwidth()) // bar is the width defined by the x1 variable
-    .attr("height", d => yScale(0) - yScale(d.value))
-    .attr("fill", d => color(d.key)); // color each bar according to its key value as defined by the color variable
+    svg
+      .select("#barchart-content")
+      .selectAll("g")
+      .data(groupedData)
+      .join("g")
+      .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
+      .selectAll("rect")
+      // value2 contains the keys passed into the domain
+      .data((d) => Object.keys(d).filter((x, index) => index != 0).map((key) => ({ key, value: d[key], value2: Object.keys(d).filter((x, index) => index != 0)})))
+      //keys.map((key) => ({ key, value: d[key] })))
+      .join("rect")
+      .attr("x", (d) => {
+        let x1Scale = d3.scaleBand().domain(d.value2).range([0, xScale.bandwidth()]);
+        return x1Scale(d.key) + 30;
+      }) // use the x1 variable to place the grouped bars
+      .attr("y", (d) => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
+      .attr("width", (d) => d3.scaleBand().domain(d.value2).range([0, xScale.bandwidth()]).bandwidth())
+      .attr("height", (d) => yScale(0) - yScale(d.value))
+      .attr("fill", (d) => color(d.key)); // color each bar according to its key value as defined by the color variable
   });
 
   return data;
