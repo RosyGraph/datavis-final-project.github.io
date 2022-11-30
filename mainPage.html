@@ -39,34 +39,35 @@
           <label>Variables:</label>
           <input type="checkbox" id="Name" name="variable" />
           <label for="games">Games </label>
-          <input type="checkbox" id="Platform" name="variable" checked/>
+          <input type="checkbox" id="Platform" name="variable" checked />
           <label for="platform">Platform </label>
-          <input type="checkbox" id="Genre" name="variable" checked/>
+          <input type="checkbox" id="Genre" name="variable" checked />
           <label for="genre">Genre </label>
           <!-- <input type="checkbox" id="Region" name="variable" />
           <label for="region">Region </label> -->
-          <input type="checkbox" id="Publisher" name="variable" checked/>
+          <input type="checkbox" id="Publisher" name="variable" checked />
           <label for="publisher">Publisher </label>
         </span>
       </div>
 
-      <div class="select-timespan">
-        <span>
-          <label>Choose Year:</label>
-          <select id="year-selection">
-            <option value="1984">1984</option>
-            <option value="1995">1995</option>
-            <option value="2010">2010</option>
-            <option selected value="2012">2012</option>
-            <option value="2015">2015</option>
-          </select>
-        </span>
+      <div class="rangeslider">
+        <input
+          type="range"
+          min="1982"
+          max="2016"
+          value="2002"
+          name="myslider"
+          id="sliderRange"
+        />
+        <output for="myslider" id="bubble">1982 </output>
+        <p>Value: <span id="yearValue"></span></p>
       </div>
+
     </div>
     <br style="clear: left" />
 
     <div id="legend-div"></div>
-    
+
     <div class="mainChart">
       <div id="barchart-div"></div>
     </div>

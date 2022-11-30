@@ -91,7 +91,10 @@ function drawCharts(data, selectedVariables) {
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
 
-  let year = parseInt(d3.select("#year-selection").property("value"));
+  //let year = parseInt(d3.select("#year-selection").property("value"));
+  let year = parseInt(d3.select("#sliderRange").property("value"));
+  console.log(parseInt(d3.select("#sliderRange").property("value")));
+
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
@@ -111,7 +114,7 @@ function drawCharts(data, selectedVariables) {
       .range([0, innerWidth])
       .padding(0.2);
 
-    let keys = Array.from(new Set(filtered.map((d) => d[sort_by])));
+    let keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
 
     let yScale = d3
       .scaleLinear()

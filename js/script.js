@@ -10,6 +10,20 @@ function loadData() {
 }
 
 function setup() {
+  // year slider
+  let rangeslider = document.getElementById("sliderRange");
+  let output = document.getElementById("yearValue");
+  let bubble = document.getElementById("bubble");
+  output.innerHTML = rangeslider.value;
+  bubble.innerHTML = rangeslider.value;
+  rangeslider.oninput = function () {
+    bubble.innerHTML = this.value;
+  };
+  rangeslider.onchange = function () {
+    output.innerHTML = this.value;
+    changeSort();
+  };
+
   // add legend svg
   d3.select("#legend-div")
     .append("svg")
@@ -21,9 +35,6 @@ function setup() {
   // add event listeners to objects in the toolbox
   document
     .querySelector("#sort-by-selection")
-    .addEventListener("change", changeSort);
-  document
-    .querySelector("#year-selection")
     .addEventListener("change", changeSort);
 
   // Select all checkboxes with the name 'variable' using querySelectorAll.
