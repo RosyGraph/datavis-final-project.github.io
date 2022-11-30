@@ -91,17 +91,17 @@ function drawCharts(data, selectedVariables) {
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
 
-  let year = parseInt(d3.select("#year_selection").property("value"));
+  let year = parseInt(d3.select("#year-selection").property("value"));
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
-  const sort_by = d3.select("#sort_by_selection").property("value");
+  const sortBy = d3.select("#sort-by-selection").property("value");
 
-  addLegend(Array.from(new Set(filtered.map((d) => d[sort_by]))));
+  addLegend(Array.from(new Set(filtered.map((d) => d[sortBy]))));
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
-    let groupedData = groupByVariable(filtered, sort_by, element);
+    let groupedData = groupByVariable(filtered, sortBy, element);
 
     let xDomain = groupedData.map((d) => d[element]).sort();
 
@@ -193,19 +193,19 @@ function drawCharts(data, selectedVariables) {
   return data;
 }
 
-function groupByVariable(data, sort_by, variable) {
-  let rolled_data = d3.rollup(
+function groupByVariable(data, sortBy, variable) {
+  let rolledData = d3.rollup(
     data,
     (v) => d3.sum(v, (d) => d.Global_Sales),
     (d) => d[variable],
-    (d) => d[sort_by]
+    (d) => d[sortBy]
   );
 
-  let aggregate = Array.from(rolled_data, ([variable_name, count]) => {
+  let aggregate = Array.from(rolledData, ([variableName, count]) => {
     const obj = {};
-    for (const [sort_by, num] of count) {
-      obj[variable] = variable_name;
-      obj[sort_by] = num;
+    for (const [sortBy, num] of count) {
+      obj[variable] = variableName;
+      obj[sortBy] = num;
     }
     return obj;
   });
@@ -227,7 +227,7 @@ function addLegend(data) {
     .data(data)
     .join("rect")
     .attr("x", 50)
-    .attr("y", (d, i) => 10 + i * (size + 5))
+    .attr("y", (_, i) => 10 + i * (size + 5))
     .attr("width", size)
     .attr("height", size)
     .style("fill", (d) => color(d));
@@ -237,7 +237,7 @@ function addLegend(data) {
     .data(data)
     .join("text")
     .attr("x", 50 + size * 1.2)
-    .attr("y", function (d, i) {
+    .attr("y", function (_, i) {
       return 10 + i * (size + 5) + size / 2;
     })
     .style("fill", function (d) {

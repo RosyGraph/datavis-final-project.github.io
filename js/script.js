@@ -20,10 +20,10 @@ function setup() {
 
   // add event listeners to objects in the toolbox
   document
-    .querySelector("#sort_by_selection")
+    .querySelector("#sort-by-selection")
     .addEventListener("change", changeSort);
   document
-    .querySelector("#year_selection")
+    .querySelector("#year-selection")
     .addEventListener("change", changeSort);
 
   // Select all checkboxes with the name 'variable' using querySelectorAll.
