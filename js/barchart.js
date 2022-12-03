@@ -91,20 +91,26 @@ function drawCharts(data, selectedVariables) {
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
 
-  //let year = parseInt(d3.select("#year-selection").property("value"));
   let year = parseInt(d3.select("#sliderRange").property("value"));
-  console.log(parseInt(d3.select("#sliderRange").property("value")));
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
   const sortBy = d3.select("#sort-by-selection").property("value");
 
-  addLegend(Array.from(new Set(filtered.map((d) => d[sortBy]))));
+  let keys;
+  if (sortBy === "Region") {
+    keys = ["Europe", "Global", "Japan", "North America", "Other"];
+  } else keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
+  console.log(keys);
+
+  addLegend(Array.from(keys));
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
     let groupedData = groupByVariable(filtered, sortBy, element);
+    console.log("heres the grouped Data");
+    console.log(groupedData);
 
     let xDomain = groupedData.map((d) => d[element]).sort();
 
@@ -113,8 +119,6 @@ function drawCharts(data, selectedVariables) {
       .domain(xDomain)
       .range([0, innerWidth])
       .padding(0.2);
-
-    let keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
 
     let yScale = d3
       .scaleLinear()
@@ -180,29 +184,156 @@ function drawCharts(data, selectedVariables) {
       .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
       .selectAll("rect")
       // value2 contains the keys passed into the domain
-      .data((d) => Object.keys(d).filter((x, index) => index != 0).map((key) => ({ key, value: d[key], value2: Object.keys(d).filter((x, index) => index != 0)})))
+      .data((d) =>
+        Object.keys(d)
+          .filter((x, index) => index != 0)
+          .map((key) => ({
+            key,
+            value: d[key],
+            value2: Object.keys(d).filter((x, index) => index != 0),
+          }))
+      )
       //keys.map((key) => ({ key, value: d[key] })))
       .join("rect")
       .attr("x", (d) => {
-        let x1Scale = d3.scaleBand().domain(d.value2).range([0, xScale.bandwidth()]);
+        let x1Scale = d3
+          .scaleBand()
+          .domain(d.value2)
+          .range([0, xScale.bandwidth()]);
         return x1Scale(d.key) + 30;
       }) // use the x1 variable to place the grouped bars
       .attr("y", (d) => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
-      .attr("width", (d) => d3.scaleBand().domain(d.value2).range([0, xScale.bandwidth()]).bandwidth())
+      .attr("width", (d) =>
+        d3
+          .scaleBand()
+          .domain(d.value2)
+          .range([0, xScale.bandwidth()])
+          .bandwidth()
+      )
       .attr("height", (d) => yScale(0) - yScale(d.value))
       .attr("fill", (d) => color(d.key)); // color each bar according to its key value as defined by the color variable
   });
-
   return data;
 }
 
 function groupByVariable(data, sortBy, variable) {
-  let rolledData = d3.rollup(
-    data,
-    (v) => d3.sum(v, (d) => d.Global_Sales),
-    (d) => d[variable],
-    (d) => d[sortBy]
-  );
+  let rolledData = [];
+
+  if (variable == "Region" && sortBy != "Region") {
+    let temp0 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Global_Sales),
+      (d) => "Global",
+      (d) => d[sortBy]
+    );
+    let temp1 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
+      (d) => "Europe",
+      (d) => d[sortBy]
+    );
+    let temp2 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Japan_Sales),
+      (d) => "Japan",
+      (d) => d[sortBy]
+    );
+    let temp3 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
+      (d) => "North America",
+      (d) => d[sortBy]
+    );
+    let temp4 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Other_Sales),
+      (d) => "Other",
+      (d) => d[sortBy]
+    );
+    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
+  } else if (sortBy == "Region" && variable != "Region") {
+    let global = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Global_Sales),
+      (d) => d[variable],
+      (d) => "Global"
+    );
+    let europe = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
+      (d) => d[variable],
+      (d) => "Europe"
+    );
+    let japan = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Japan_Sales),
+      (d) => d[variable],
+      (d) => "Japan"
+    );
+    let northAmerica = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
+      (d) => d[variable],
+      (d) => "North America"
+    );
+    let other = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Other_Sales),
+      (d) => d[variable],
+      (d) => "Other"
+    );
+    rolledData = new Map([
+      ...global,
+      ...europe,
+      ...japan,
+      ...northAmerica,
+      ...other,
+    ]);
+
+    console.log(global);
+    console.log(europe);
+    console.log(temp);
+
+  } else if (sortBy == "Region" && variable == "Region") {
+    let temp0 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Global_Sales),
+      (d) => "Global",
+      (d) => "Global"
+    );
+    let temp1 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
+      (d) => "Europe",
+      (d) => "Europe"
+    );
+    let temp2 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Japan_Sales),
+      (d) => "Japan",
+      (d) => "Japan"
+    );
+    let temp3 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
+      (d) => "North America",
+      (d) => "North America"
+    );
+    let temp4 = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Other_Sales),
+      (d) => "Other",
+      (d) => "Other"
+    );
+    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
+  } else {
+    rolledData = d3.rollup(
+      data,
+      (v) => d3.sum(v, (d) => d.Global_Sales),
+      (d) => d[variable],
+      (d) => d[sortBy]
+    );
+  }
 
   let aggregate = Array.from(rolledData, ([variableName, count]) => {
     const obj = {};
