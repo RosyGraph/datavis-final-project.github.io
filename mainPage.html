@@ -26,9 +26,9 @@
           <label>Sort By:</label>
           <select id="sort-by-selection">
             <option value="Name">Name</option>
-            <option selected value="Platform">Platform</option>
-            <option value="Genre">Genre</option>
-            <!-- <option value="region">Region</option> -->
+            <option value="Platform">Platform</option>
+            <option selected value="Genre">Genre</option>
+            <!-- <option value="Region">Region</option> -->
             <option value="Publisher">Publisher</option>
           </select>
         </span>
@@ -43,9 +43,9 @@
           <label for="platform">Platform </label>
           <input type="checkbox" id="Genre" name="variable" checked />
           <label for="genre">Genre </label>
-          <!-- <input type="checkbox" id="Region" name="variable" />
-          <label for="region">Region </label> -->
-          <input type="checkbox" id="Publisher" name="variable" checked />
+          <input type="checkbox" id="Region" name="variable" />
+          <label for="region">Region </label>
+          <input type="checkbox" id="Publisher" name="variable"/>
           <label for="publisher">Publisher </label>
         </span>
       </div>
@@ -55,7 +55,7 @@
           type="range"
           min="1982"
           max="2016"
-          value="2002"
+          value="2005"
           name="myslider"
           id="sliderRange"
         />
@@ -74,5 +74,6 @@
 
     <script src="js/barchart.js"></script>
     <script src="js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
   </body>
 </html>
