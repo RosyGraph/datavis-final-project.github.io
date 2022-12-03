@@ -102,15 +102,12 @@ function drawCharts(data, selectedVariables) {
   if (sortBy === "Region") {
     keys = ["Europe", "Global", "Japan", "North America", "Other"];
   } else keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
-  console.log(keys);
 
   addLegend(Array.from(keys));
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
     let groupedData = groupByVariable(filtered, sortBy, element);
-    console.log("heres the grouped Data");
-    console.log(groupedData);
 
     let xDomain = groupedData.map((d) => d[element]).sort();
 
@@ -282,6 +279,7 @@ function groupByVariable(data, sortBy, variable) {
       (d) => d[variable],
       (d) => "Other"
     );
+
     rolledData = new Map([
       ...global,
       ...europe,
@@ -289,10 +287,6 @@ function groupByVariable(data, sortBy, variable) {
       ...northAmerica,
       ...other,
     ]);
-
-    console.log(global);
-    console.log(europe);
-    console.log(temp);
 
   } else if (sortBy == "Region" && variable == "Region") {
     let temp0 = d3.rollup(
