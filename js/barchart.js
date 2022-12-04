@@ -538,8 +538,11 @@ var mousemove = function (event, d) {
     .selectAll("text")
     .data([d])
     .join("text")
-    .text((d) => d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + parseFloat(d.value.toFixed(2)))
-    .attr("transform", `translate(${0}, ${15})`)
+    .text((d) => {
+      if (d.value4 == d.value3)
+      return d.value4 + ": " + d.key +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
+      else return d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
+    })    .attr("transform", `translate(${0}, ${15})`)
 };
 var mouseleave = function (d) {
   Tooltip.style("opacity", 0);
