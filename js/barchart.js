@@ -63,7 +63,6 @@ function mouseleave() {
 }
 
 function animateBarchart(data) {
-  d3.select("div#multi-slider").select("button").text("Stop");
   const years = Array.from(new Set(data.map((d) => +d.Year)))
     .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
     .sort((a, b) => a - b);

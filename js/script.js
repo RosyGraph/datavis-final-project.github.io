@@ -33,9 +33,7 @@ function setup(data) {
     animationRunning = false;
     d3.select("div#multi-slider").select("button").text("Go!");
   };
-  document
-    .querySelector("#sort-by-selection")
-    .addEventListener("change", onInputChange);
+  d3.select("#sort-by-selection").on("change", onInputChange);
 
   const checkboxes = d3.selectAll("input[type=checkbox][name=variable]");
 
