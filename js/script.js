@@ -29,8 +29,8 @@ function setup() {
     .append("svg")
     .attr("id", "legend-svg")
     .classed("legend", true)
-    .attr("height", 200)
-    .attr("width", 600);
+    .attr("height", 600)
+    .attr("width", 200);
 
   // add event listeners to objects in the toolbox
   document
