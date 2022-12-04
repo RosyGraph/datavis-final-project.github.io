@@ -1,4 +1,3 @@
-let data;
 let selectedYears;
 let animationRunning = false;
 loadData();
