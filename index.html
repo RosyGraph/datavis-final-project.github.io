@@ -16,8 +16,14 @@
         width: 50%;
         margin-left: 25%;
       }
+      a {
+        color: white;
+      }
+      a:visited {
+        color:#dcf7ff;
+      }
       button {
-        border: none;
+        border: solid black 2px;
         background-image: url("images/button.jpg");
         padding: 16px 32px;
         text-align: center;
@@ -28,6 +34,15 @@
         transition-duration: 0.4s;
         cursor: pointer;
       }
+      p {
+        border: solid black 2px;
+        color: black;
+        background-image: linear-gradient(to bottom right, #caffd2, white);
+        width: 80%;
+        text-align: center;
+        width: 50%;
+        margin-left: 25%;
+      }
     </style>
   </head>
 
@@ -37,17 +52,29 @@
       <h2>Visualization for Data Science CS-5630 / CS-6630 Fall 2022</h2>
     </header>
     <div style="text-align:center">
-      <p></p>
-      <button class="button">Process Book</button>
-      <button class="button">Data File</button>
-      <button class="button">Screen Capture</button>
-      <p>Story</p>
+      <button class="button"><a class="datafile" href="https://github.com/RosyGraph/datavis-final-project/blob/main/ProcessBook.pdf">Process Book</a></button>
+      <button class="button"><a class="datafile" href="https://github.com/RosyGraph/datavis-final-project/blob/main/data/video_games_dataset.csv">Data File</a></button>
+      <button class="button"><a class="datafile" href="https://github.com/RosyGraph/datavis-final-project/blob/main/Screencap.mp4">Screen Capture</a></button>
     </div>
+    <br>
     <div style="text-align:center">
-    <iframe src="mainPage.html" style="border:2px #000000 solid; background-color: #dcf7ff;" name="main" scrolling="no" frameborder="1" width="85%" height="1300px" margin-left="25%"></iframe>
+    <iframe src="mainPage.html" style="border:2px #000000 solid; background-color: #dcf7ff;" name="main" scrolling="no" frameborder="1" width="90%" height="2000px" margin-left="25%"></iframe>
     </div> 
     <div style="text-align:center">
-      <p>Results</p>
+      <button class="button"><b>What am I looking at?</b></button>
+      <p>This tool helps to explore the dataset video_games_dataset.csv that can be found on Kaggle.com. 
+        It is a fun dataset to work with, shows interesting historical data and provides many different options for exploring the data.
+        Having some background in video games meant that each team member would have some experience and frame of reference for the data
+        but the tool is provided for anyone to use.
+      </p>
+      <button class="button"><b>What does it show?</b></button>
+      <p>Exploring this data, utilizing the many filtering options available, will help to answer such questions as: 
+        “What are the worldwide sales figures, by region, of the most popular video games between 1982 and 2016?” 
+        This data also provides answers to a lot more questions such as: ”Which region had the most sales of X video game?” 
+        or “Which video game sold the most copies between 2002 and 2005?” This data builds a picture of the Video Game sales landscape 
+        between 1982 and 2016 to provide trends and patterns that show which games sold the best, where they sold and 
+        offer some insights into why games might sell differently in each region.
+        </p>
     </div>
   </body>
 </html>
