@@ -13,19 +13,20 @@ function getEnabledVariables() {
     .map((i) => i.id);
 }
 
-function animateBarchart() {
-  const years = Array.from(new Set(mainData.map((d) => +d.Year)))
+function animateBarchart(data) {
+  const years = Array.from(new Set(data.map((d) => +d.Year)))
     .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
     .sort((a, b) => a - b);
-  startDisplayChain(mainData, years);
+  startDisplayChain(data, years);
 }
 
 function startDisplayChain(data, years, i = 0) {
   const year = years[i];
+  const selectedVariables = getEnabledVariables();
   /*.on("end", () => {
       if (i < years.length - 2) startDisplayChain(data, years, color, i + 1);
     });*/
-  // clear existing charts
+
   const filtered = data.filter((d) => {
     return +d.Year === year;
   });
@@ -141,14 +142,14 @@ function startDisplayChain(data, years, i = 0) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key));
+      .attr("fill", (d) => color(d.key)); // color each bar according to its key value as defined by the color variable
   });
+  return data;
   return data;
 }
 
 function drawCharts(data) {
   const selectedVariables = getEnabledVariables();
-  console.log(selectedVariables);
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
 

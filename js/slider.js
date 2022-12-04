@@ -16,7 +16,7 @@ function renderMultislider(data) {
     .on("onchange", (d) => {
       button.attr("disabled", d[0] === d[1] || null);
       selectedYears = d;
-      drawCharts(years);
+      drawCharts(data);
     });
 
   const gRange = div
@@ -28,6 +28,6 @@ function renderMultislider(data) {
 
   gRange.call(sliderRange);
   button.on("click", () => {
-    animateBarchart();
+    animateBarchart(data);
   });
 }

@@ -1,4 +1,4 @@
-let mainData;
+let data;
 let selectedYears;
 loadData();
 
@@ -18,7 +18,7 @@ function setup(data) {
   // add event listeners to objects in the toolbox
   document
     .querySelector("#sort-by-selection")
-    .addEventListener("change", drawCharts(data));
+    .addEventListener("change", () => drawCharts(data));
 
   // Select all checkboxes with the name 'variable' using querySelectorAll.
   const checkboxes = document.querySelectorAll(
