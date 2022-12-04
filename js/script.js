@@ -1,3 +1,4 @@
+let data;
 let selectedYears;
 let animationRunning = false;
 loadData();
@@ -15,6 +16,18 @@ function setup(data) {
     .attr("height", 600)
     .attr("width", 200);
 
+  d3.select("#tooltip-div")
+    .append("svg")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "lightblue")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .attr("height", 20)
+    .attr("width", 450);
+
   const onInputChange = () => {
     drawCharts(data);
     animationRunning = false;
@@ -24,36 +37,18 @@ function setup(data) {
     .querySelector("#sort-by-selection")
     .addEventListener("change", onInputChange);
 
-  const checkboxes = document.querySelectorAll(
-    "input[type=checkbox][name=variable]"
-  );
+  const checkboxes = d3.selectAll("input[type=checkbox][name=variable]");
 
-  const limitCheckBoxes = () => {
-    var checkboxgroup = document.querySelectorAll(
-      "input[type=checkbox][name=variable]"
-    );
-    var limit = 4;
-
-    for (var i = 0; i < checkboxgroup.length; i++) {
-      checkboxgroup[i].onclick = function () {
-        var checkedcount = 0;
-        for (var i = 0; i < checkboxgroup.length; i++) {
-          checkedcount += checkboxgroup[i].checked ? 1 : 0;
-        }
-        if (checkedcount > limit) {
-          this.checked = false;
-        } else onInputChange();
-      };
-    }
+  const limitCheckBoxes = (e) => {
+    const limit = 4;
+    const checkedcount = checkboxes.nodes().filter((e) => e.checked).length;
+    if (e && checkedcount > limit) {
+      e.target.checked = false;
+    } else onInputChange();
   };
 
-  checkboxes.forEach(function (checkbox) {
-    checkbox.addEventListener("change", limitCheckBoxes);
-  });
-
+  checkboxes.on("change", limitCheckBoxes);
   limitCheckBoxes();
-
-  // platform, genre, and publisher are default values selected
   drawCharts(data);
   return data;
 }

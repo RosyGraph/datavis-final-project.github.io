@@ -13,6 +13,55 @@ function getEnabledVariables() {
     .map((i) => i.id);
 }
 
+function mouseover(e) {
+  d3.select("div#tooltip-div").style("opacity", 1);
+  d3.select(e.target).style("stroke", "black").style("opacity", 1);
+}
+
+function mousemove(event, d) {
+  const x = event.clientX;
+  const y = event.clientY;
+  const tooltip = d3.select("div#tooltip-div");
+  tooltip.attr("transform", `translate(${x - 400}, ${y - 275})`);
+
+  tooltip
+    .selectAll("text")
+    .data([d])
+    .join("text")
+    .text((d) => {
+      if (d.value4 == d.value3)
+        return (
+          d.value4 +
+          ": " +
+          d.key +
+          ",\n" +
+          "Sales: " +
+          parseFloat(d.value.toFixed(2))
+        );
+      else
+        return (
+          d.value4 +
+          ": " +
+          d.key +
+          ",\n" +
+          d.value3 +
+          ": " +
+          d.value5 +
+          ",\n" +
+          "Sales: " +
+          parseFloat(d.value.toFixed(2))
+        );
+    })
+    .attr("transform", `translate(${0}, ${15})`);
+}
+
+function mouseleave() {
+  const tooltip = d3.select("div#tooltip-div");
+  tooltip.style("opacity", 0);
+  d3.select(this).style("stroke", "none");
+  tooltip.attr("transform", `translate(${0}, ${0})`);
+}
+
 function animateBarchart(data) {
   d3.select("div#multi-slider").select("button").text("Stop");
   const years = Array.from(new Set(data.map((d) => +d.Year)))
@@ -130,7 +179,7 @@ function startDisplayChain(data, years, i = 0) {
             value2: Object.keys(d).filter((_, index) => index != 0),
             value3: element,
             value4: sortBy,
-            value5: d[element]
+            value5: d[element],
           }))
       )
       .join("rect")
@@ -150,7 +199,7 @@ function startDisplayChain(data, years, i = 0) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
+      .attr("fill", (d) => color(d.key))
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave)
@@ -272,7 +321,7 @@ function drawCharts(data) {
             value2: Object.keys(d).filter((_, index) => index != 0),
             value3: element,
             value4: sortBy,
-            value5: d[element]
+            value5: d[element],
           }))
       )
       .join("rect")
@@ -292,7 +341,7 @@ function drawCharts(data) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
+      .attr("fill", (d) => color(d.key))
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
@@ -509,43 +558,3 @@ function addLegend(data) {
     .transition()
     .style("opacity", 1);
 }
-
-// create a tooltip
-var Tooltip = d3
-  .select("#tooltip-div")
-  .append("svg")
-  .style("opacity", 0)
-  .attr("class", "tooltip")
-  .style("background-color", "lightblue")
-  .style("border", "solid")
-  .style("border-width", "2px")
-  .style("border-radius", "5px")
-  .style("padding", "5px")
-  .attr("height", 20)
-  .attr("width", 450);
-
-// Three function that change the tooltip when user hover / move / leave a cell
-var mouseover = function (d) {
-  Tooltip.style("opacity", 1);
-  d3.select(this).style("stroke", "black").style("opacity", 1);
-};
-var mousemove = function (event, d) {
-  const x = event.clientX;
-  const y = event.clientY;
-  Tooltip.attr("transform", `translate(${x - 400}, ${y - 275})`);
-
-  Tooltip
-    .selectAll("text")
-    .data([d])
-    .join("text")
-    .text((d) => {
-      if (d.value4 == d.value3)
-      return d.value4 + ": " + d.key +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
-      else return d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
-    })    .attr("transform", `translate(${0}, ${15})`)
-};
-var mouseleave = function (d) {
-  Tooltip.style("opacity", 0);
-  d3.select(this).style("stroke", "none");
-  Tooltip.attr("transform", `translate(${0}, ${0})`);
-};
