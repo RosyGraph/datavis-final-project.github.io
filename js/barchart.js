@@ -280,14 +280,22 @@ function groupByVariable(data, sortBy, variable) {
       (d) => "Other"
     );
 
-    rolledData = new Map([
-      ...global,
-      ...europe,
-      ...japan,
-      ...northAmerica,
-      ...other,
-    ]);
-
+    // merges two maps with maps as value
+    function merge(a, b) {
+      const a2 = new Map([...a]);
+      const b2 = new Map([...b]);
+      const result = new Map([...a]);
+      for (const [key, value] of a2) {
+        value.set(Array.from(b2.get(key).keys())[0], b2.get(key).get(Array.from(b2.get(key).keys())[0]));
+      }
+      return result;
+    }
+    let temp = merge(global, europe);
+    let temp2 = merge (temp, japan);
+    let temp3 = merge (temp2, northAmerica);
+    let temp4 = merge (temp3, other);
+    rolledData = temp4;
+    
   } else if (sortBy == "Region" && variable == "Region") {
     let temp0 = d3.rollup(
       data,
