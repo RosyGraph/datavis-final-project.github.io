@@ -403,7 +403,7 @@ function groupByVariable(data, sortBy, variable) {
     );
   }
 
-  let aggregate = Array.from(rolledData, ([variableName, count]) => {
+  return Array.from(rolledData, ([variableName, count]) => {
     const obj = {};
     for (const [sortBy, num] of count) {
       obj[variable] = variableName;
@@ -411,43 +411,39 @@ function groupByVariable(data, sortBy, variable) {
     }
     return obj;
   });
-  return aggregate;
 }
 
 function addLegend(data) {
-  // color scale
   const color = d3.scaleOrdinal(d3.schemeCategory10).domain(data);
+  const size = 20;
   const legend = d3.select("#legend-svg");
 
-  // clears legend
   legend.selectAll("*").remove();
 
-  let size = 20;
-
   legend
     .selectAll("g")
     .data(data)
-    .join("rect")
-    .attr("x", 50)
-    .attr("y", (_, i) => 10 + i * (size + 5))
-    .attr("width", size)
-    .attr("height", size)
-    .style("fill", (d) => color(d));
-
-  legend
-    .selectAll("g")
-    .data(data)
-    .join("text")
-    .attr("x", 50 + size * 1.2)
-    .attr("y", function (_, i) {
-      return 10 + i * (size + 5) + size / 2;
-    })
-    .style("fill", function (d) {
-      return color(d);
-    })
-    .text(function (d) {
-      return d;
-    })
-    .attr("text-anchor", "left")
-    .style("alignment-baseline", "middle");
+    .join((enter) => {
+      enter
+        .append("rect")
+        .attr("x", 50)
+        .attr("y", (_, i) => 10 + i * (size + 5))
+        .attr("width", size)
+        .attr("height", size)
+        .style("fill", (d) => color(d));
+      enter
+        .append("text")
+        .attr("x", 50 + size * 1.2)
+        .attr("y", function (_, i) {
+          return 10 + i * (size + 5) + size / 2;
+        })
+        .style("fill", function (d) {
+          return color(d);
+        })
+        .text(function (d) {
+          return d;
+        })
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle");
+    });
 }
