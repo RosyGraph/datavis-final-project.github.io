@@ -15,7 +15,7 @@ function animateBarchart(data) {
   return data;
 }
 function startDisplayChain(data, years, color, i = 0) {
-  const year = years[i];
+  const year = years[0];
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
@@ -87,6 +87,7 @@ function startDisplayChain(data, years, color, i = 0) {
     });
   return data;
 }
+
 function drawCharts(data, selectedVariables) {
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
@@ -183,11 +184,11 @@ function drawCharts(data, selectedVariables) {
       // value2 contains the keys passed into the domain
       .data((d) =>
         Object.keys(d)
-          .filter((x, index) => index != 0)
+          .filter((_, index) => index != 0)
           .map((key) => ({
             key,
             value: d[key],
-            value2: Object.keys(d).filter((x, index) => index != 0),
+            value2: Object.keys(d).filter((_, index) => index != 0),
           }))
       )
       //keys.map((key) => ({ key, value: d[key] })))
@@ -220,31 +221,31 @@ function groupByVariable(data, sortBy, variable) {
     let temp0 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => "Global",
+      () => "Global",
       (d) => d[sortBy]
     );
     let temp1 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
-      (d) => "Europe",
+      () => "Europe",
       (d) => d[sortBy]
     );
     let temp2 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
-      (d) => "Japan",
+      () => "Japan",
       (d) => d[sortBy]
     );
     let temp3 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
-      (d) => "North America",
+      () => "North America",
       (d) => d[sortBy]
     );
     let temp4 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
-      (d) => "Other",
+      () => "Other",
       (d) => d[sortBy]
     );
     rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
@@ -253,31 +254,31 @@ function groupByVariable(data, sortBy, variable) {
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
       (d) => d[variable],
-      (d) => "Global"
+      () => "Global"
     );
     let europe = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
       (d) => d[variable],
-      (d) => "Europe"
+      () => "Europe"
     );
     let japan = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
       (d) => d[variable],
-      (d) => "Japan"
+      () => "Japan"
     );
     let northAmerica = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
       (d) => d[variable],
-      (d) => "North America"
+      () => "North America"
     );
     let other = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
       (d) => d[variable],
-      (d) => "Other"
+      () => "Other"
     );
 
     // merges two maps with maps as value
@@ -302,32 +303,32 @@ function groupByVariable(data, sortBy, variable) {
     let temp0 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => "Global",
-      (d) => "Global"
+      () => "Global",
+      () => "Global"
     );
     let temp1 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
-      (d) => "Europe",
-      (d) => "Europe"
+      () => "Europe",
+      () => "Europe"
     );
     let temp2 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
-      (d) => "Japan",
-      (d) => "Japan"
+      () => "Japan",
+      () => "Japan"
     );
     let temp3 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
-      (d) => "North America",
-      (d) => "North America"
+      () => "North America",
+      () => "North America"
     );
     let temp4 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
-      (d) => "Other",
-      (d) => "Other"
+      () => "Other",
+      () => "Other"
     );
     rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
   } else {
