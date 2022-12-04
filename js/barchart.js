@@ -23,9 +23,6 @@ function animateBarchart(data) {
 function startDisplayChain(data, years, i = 0) {
   const year = years[i];
   const selectedVariables = getEnabledVariables();
-  /*.on("end", () => {
-      if (i < years.length - 2) startDisplayChain(data, years, color, i + 1);
-    });*/
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
@@ -142,16 +139,22 @@ function startDisplayChain(data, years, i = 0) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)); // color each bar according to its key value as defined by the color variable
+      .attr("fill", (d) => color(d.key))
+      .transition()
+      .duration(2000)
+      .on("end", () => {
+        if (i < years.length - 2) startDisplayChain(data, years, color, i + 1);
+      });
   });
-  return data;
   return data;
 }
 
 function drawCharts(data) {
   const selectedVariables = getEnabledVariables();
-  // clear existing charts
-  d3.select("#barchart-div").selectAll("*").remove();
+  d3.select("#barchart-div")
+    .selectAll("svg")
+    .data(selectedVariables)
+    .join("svg");
 
   const year = selectedYears[0];
 
@@ -169,26 +172,26 @@ function drawCharts(data) {
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
-    let groupedData = groupByVariable(filtered, sortBy, element);
+    const groupedData = groupByVariable(filtered, sortBy, element);
 
-    let xDomain = groupedData.map((d) => d[element]).sort();
+    const xDomain = groupedData.map((d) => d[element]).sort();
 
-    let xScale = d3
+    const xScale = d3
       .scaleBand()
       .domain(xDomain)
       .range([0, innerWidth])
       .padding(0.2);
 
-    let yScale = d3
+    const yScale = d3
       .scaleLinear()
       .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]); // in each key, look for the maximum number
+      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
 
-    let color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
 
-    let svg = d3
-      .select("#barchart-div")
-      .append("svg")
+    const svg = d3
+      .selectAll("#barchart-div svg")
+      .filter((d) => d === element)
       .attr("id", element + "-barchart-svg")
       .classed("barchart", true)
       .attr("height", 400)
@@ -255,7 +258,7 @@ function drawCharts(data) {
       //keys.map((key) => ({ key, value: d[key] })))
       .join("rect")
       .attr("x", (d) => {
-        let x1Scale = d3
+        const x1Scale = d3
           .scaleBand()
           .domain(d.value2)
           .range([0, xScale.bandwidth()]);
