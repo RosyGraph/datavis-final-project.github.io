@@ -197,30 +197,28 @@ function drawCharts(data) {
       .attr("height", 400)
       .attr("width", 600);
 
-    svg.append("g").attr("id", "barchart-title");
-    svg.append("g").attr("id", "barchart-year");
-    svg.append("g").attr("id", "barchart-x-axis");
-    svg.append("g").attr("id", "barchart-y-axis");
-    svg.append("g").attr("id", "barchart-content");
+    svg.append("g").classed("barchart-title", true);
+    svg.append("g").classed("barchart-year", true);
+    svg.append("g").classed("barchart-x-axis", true);
+    svg.append("g").classed("barchart-y-axis", true);
+    svg.append("g").classed("barchart-content", true);
 
     svg
-      .select("#barchart-title")
-      .selectAll("text")
+      .selectAll("g.barchart-title text")
       .data([element])
       .join("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .select("#barchart-year")
-      .selectAll("text")
+      .selectAll("g.barchart-year text")
       .data([year])
       .join("text")
       .attr("x", width - margin.right - 20)
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .selectAll("#barchart-x-axis")
+      .selectAll("g.barchart-x-axis")
       .data([year])
       .join("g")
       .classed("x-axis", true)
@@ -232,15 +230,14 @@ function drawCharts(data) {
       .duration(1000)
       .call(d3.axisBottom(xScale));
     svg
-      .select("#barchart-y-axis")
+      .select("g.barchart-y-axis")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .transition("y-axis")
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
     svg
-      .select("#barchart-content")
-      .selectAll("g")
+      .selectAll("g.barchart-content g")
       .data(groupedData)
       .join("g")
       .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
