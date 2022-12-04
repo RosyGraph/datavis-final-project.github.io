@@ -5,12 +5,12 @@
     <title>Video Game Sales Exploration</title>
     <script src="https://d3js.org/d3.v7.js"></script>
     <style>
-      svg.barchart g rect {
-        filter: drop-shadow(2px 2px 6px rgba(26, 32, 44, 0.5));
+      body {
+        background-color: linen;
       }
-      div.toolbox div {
-        width: 30%;
-        float: left;
+      h1 {
+        color: black;
+        text-align: center;
       }
     </style>
   </head>
@@ -20,59 +20,11 @@
       <h1>Video Game Sales Exploration</h1>
     </header>
 
-    <div class="toolbox">
-      <div class="sort-by">
-        <span>
-          <label>Sort By:</label>
-          <select id="sort-by-selection">
-            <option value="Name">Name</option>
-            <option selected value="Platform">Platform</option>
-            <option value="Genre">Genre</option>
-            <!-- <option value="region">Region</option> -->
-            <option value="Publisher">Publisher</option>
-          </select>
-        </span>
-      </div>
-
-      <div class="select-variables">
-        <span>
-          <label>Variables:</label>
-          <input type="checkbox" id="Name" name="variable" />
-          <label for="games">Games </label>
-          <input type="checkbox" id="Platform" name="variable" checked />
-          <label for="platform">Platform </label>
-          <input type="checkbox" id="Genre" name="variable" checked />
-          <label for="genre">Genre </label>
-          <!-- <input type="checkbox" id="Region" name="variable" />
-          <label for="region">Region </label> -->
-          <input type="checkbox" id="Publisher" name="variable" checked />
-          <label for="publisher">Publisher </label>
-        </span>
-      </div>
-
-      <div class="rangeslider">
-        <input
-          type="range"
-          min="1982"
-          max="2016"
-          value="2002"
-          name="myslider"
-          id="sliderRange"
-        />
-        <output for="myslider" id="bubble">1982 </output>
-        <p>Value: <span id="yearValue"></span></p>
-      </div>
-
-    </div>
-    <br style="clear: left" />
-
-    <div id="legend-div"></div>
-
-    <div class="mainChart">
-      <div id="barchart-div"></div>
-    </div>
-
+    const svg = d3.select("#body");
+    svg
+      .attr("transform", "translate(0,0)")
+      .attr("height", 550)
+      .attr("Width", 700);
     <script src="js/barchart.js"></script>
-    <script src="js/script.js"></script>
   </body>
 </html>
