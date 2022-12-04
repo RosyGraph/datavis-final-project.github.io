@@ -416,34 +416,57 @@ function groupByVariable(data, sortBy, variable) {
 function addLegend(data) {
   const color = d3.scaleOrdinal(d3.schemeCategory10).domain(data);
   const size = 20;
-  const legend = d3.select("#legend-svg");
+  const y = d3
+    .scaleBand()
+    .domain(data)
+    .range([0, size * (data.length + 5)])
+    .padding(0.7);
 
-  legend.selectAll("*").remove();
-
-  legend
+  const legendGroups = d3
+    .select("#legend-svg")
     .selectAll("g")
     .data(data)
-    .join((enter) => {
+    .join(
+      (enter) =>
+        enter.append("g").attr("transform", (d) => `translate(50, ${y(d)})`),
+      (update) =>
+        update
+          .transition()
+          .duration(1000)
+          .attr("transform", (d) => `translate(50, ${y(d)})`)
+    );
+  legendGroups
+    .selectAll("rect")
+    .data((d) => [d])
+    .join((enter) =>
       enter
         .append("rect")
-        .attr("x", 50)
-        .attr("y", (_, i) => 10 + i * (size + 5))
+        .attr("x", 0)
+        .attr("y", 0)
         .attr("width", size)
         .attr("height", size)
-        .style("fill", (d) => color(d));
-      enter
-        .append("text")
-        .attr("x", 50 + size * 1.2)
-        .attr("y", function (_, i) {
-          return 10 + i * (size + 5) + size / 2;
-        })
-        .style("fill", function (d) {
-          return color(d);
-        })
-        .text(function (d) {
-          return d;
-        })
-        .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle");
-    });
+        .style("fill", (d) => color(d))
+        .style("opacity", 0)
+        .transition()
+        .duration(500)
+        .style("opacity", 1)
+    );
+  legendGroups
+    .selectAll("text")
+    .data((d) => [d])
+    .join("text")
+    .attr("x", 0)
+    .attr("y", 0)
+    .selectAll("tspan")
+    .data((d) => [d])
+    .join("tspan")
+    .attr("x", size * 1.5 + y.padding())
+    .attr("y", size / 2)
+    .style("fill", (d) => color(d))
+    .attr("text-anchor", "left")
+    .style("dominant-baseline", "middle")
+    .text((d) => d)
+    .style("opacity", 0)
+    .transition()
+    .style("opacity", 1);
 }
