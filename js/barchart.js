@@ -91,7 +91,7 @@ function drawCharts(data, selectedVariables) {
   // clear existing charts
   d3.select("#barchart-div").selectAll("*").remove();
 
-  let year = parseInt(d3.select("#sliderRange").property("value"));
+  const year = selectedYears[0];
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
