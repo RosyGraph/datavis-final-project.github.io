@@ -1,22 +1,22 @@
-function renderMultislider() {
-  const data = mainData.map((d) => +d.Year);
-  selectedYears = d3.extent(data);
+function renderMultislider(data) {
+  const years = data.map((d) => +d.Year);
+  selectedYears = d3.extent(years);
   const div = d3.select("div#multi-slider");
   const button = div.select("button");
   const sliderRange = d3
     .sliderBottom()
-    .min(d3.min(data))
-    .max(d3.max(data))
+    .min(d3.min(years))
+    .max(d3.max(years))
     .width(200)
     .step(1)
     .ticks(3)
     .tickFormat(d3.format(".0f"))
-    .default(d3.extent(data))
+    .default(d3.extent(years))
     .fill("#2196f3")
     .on("onchange", (d) => {
       button.attr("disabled", d[0] === d[1] || null);
       selectedYears = d;
-      changeSort();
+      drawCharts(years);
     });
 
   const gRange = div
@@ -28,6 +28,6 @@ function renderMultislider() {
 
   gRange.call(sliderRange);
   button.on("click", () => {
-    console.log(sliderRange.value().map((d) => +d));
+    animateBarchart();
   });
 }
