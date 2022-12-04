@@ -204,14 +204,16 @@ function drawCharts(data) {
     svg.append("g").classed("barchart-content", true);
 
     svg
-      .selectAll("g.barchart-title text")
+      .select("g.barchart-title")
+      .selectAll("text")
       .data([element])
       .join("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .selectAll("g.barchart-year text")
+      .select("g.barchart-year")
+      .selectAll("text")
       .data([year])
       .join("text")
       .attr("x", width - margin.right - 20)
@@ -237,7 +239,8 @@ function drawCharts(data) {
       .call(d3.axisLeft(yScale));
 
     svg
-      .selectAll("g.barchart-content g")
+      .select("g.barchart-content")
+      .selectAll("g")
       .data(groupedData)
       .join("g")
       .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
@@ -252,7 +255,6 @@ function drawCharts(data) {
             value2: Object.keys(d).filter((_, index) => index != 0),
           }))
       )
-      //keys.map((key) => ({ key, value: d[key] })))
       .join("rect")
       .attr("x", (d) => {
         const x1Scale = d3
