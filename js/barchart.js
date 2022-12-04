@@ -538,7 +538,7 @@ var mousemove = function (event, d) {
     .selectAll("text")
     .data([d])
     .join("text")
-    .text((d) => d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + d.value)
+    .text((d) => d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + parseFloat(d.value.toFixed(2)))
     .attr("transform", `translate(${0}, ${15})`)
 };
 var mouseleave = function (d) {
