@@ -1,6 +1,6 @@
 const height = 400,
   width = 600;
-const margin = { top: 20, bottom: 20, left: 30, right: 20 };
+const margin = { top: 20, bottom: 60, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
 
@@ -66,8 +66,8 @@ function startDisplayChain(data, years, i = 0) {
       .filter((d) => d === element)
       .attr("id", element + "-barchart-svg")
       .classed("barchart", true)
-      .attr("height", 400)
-      .attr("width", 600);
+      .attr("height", height)
+      .attr("width", width);
 
     svg.append("g").classed("barchart-title", true);
     svg.append("g").classed("barchart-year", true);
@@ -102,7 +102,10 @@ function startDisplayChain(data, years, i = 0) {
       )
       .transition("x-axis")
       .duration(1000)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      .selectAll("text")
+      .attr("transform", "rotate(30)")
+      .style("text-anchor", "start");
     svg
       .select("g.barchart-y-axis")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
@@ -125,6 +128,9 @@ function startDisplayChain(data, years, i = 0) {
             key,
             value: d[key],
             value2: Object.keys(d).filter((_, index) => index != 0),
+            value3: element,
+            value4: sortBy,
+            value5: d[element]
           }))
       )
       .join("rect")
@@ -144,7 +150,10 @@ function startDisplayChain(data, years, i = 0) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key))
+      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave)
       .transition()
       .delay(2000)
       .on("end", () => {
@@ -199,8 +208,8 @@ function drawCharts(data) {
       .filter((d) => d === element)
       .attr("id", element + "-barchart-svg")
       .classed("barchart", true)
-      .attr("height", 400)
-      .attr("width", 600);
+      .attr("height", height)
+      .attr("width", width);
 
     svg.append("g").classed("barchart-title", true);
     svg.append("g").classed("barchart-year", true);
@@ -235,7 +244,10 @@ function drawCharts(data) {
       )
       .transition("x-axis")
       .duration(1000)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      .selectAll("text")
+      .attr("transform", "rotate(30)")
+      .style("text-anchor", "start");
     svg
       .select("g.barchart-y-axis")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
@@ -258,6 +270,9 @@ function drawCharts(data) {
             key,
             value: d[key],
             value2: Object.keys(d).filter((_, index) => index != 0),
+            value3: element,
+            value4: sortBy,
+            value5: d[element]
           }))
       )
       .join("rect")
@@ -277,7 +292,10 @@ function drawCharts(data) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)); // color each bar according to its key value as defined by the color variable
+      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
   });
   return data;
 }
@@ -491,3 +509,40 @@ function addLegend(data) {
     .transition()
     .style("opacity", 1);
 }
+
+// create a tooltip
+var Tooltip = d3
+  .select("#tooltip-div")
+  .append("svg")
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "lightblue")
+  .style("border", "solid")
+  .style("border-width", "2px")
+  .style("border-radius", "5px")
+  .style("padding", "5px")
+  .attr("height", 20)
+  .attr("width", 450);
+
+// Three function that change the tooltip when user hover / move / leave a cell
+var mouseover = function (d) {
+  Tooltip.style("opacity", 1);
+  d3.select(this).style("stroke", "black").style("opacity", 1);
+};
+var mousemove = function (event, d) {
+  const x = event.clientX;
+  const y = event.clientY;
+  Tooltip.attr("transform", `translate(${x - 400}, ${y - 275})`);
+
+  Tooltip
+    .selectAll("text")
+    .data([d])
+    .join("text")
+    .text((d) => d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + d.value)
+    .attr("transform", `translate(${0}, ${15})`)
+};
+var mouseleave = function (d) {
+  Tooltip.style("opacity", 0);
+  d3.select(this).style("stroke", "none");
+  Tooltip.attr("transform", `translate(${0}, ${0})`);
+};
