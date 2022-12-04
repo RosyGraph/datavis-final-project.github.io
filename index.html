@@ -2,29 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Video Game Sales Exploration</title>
-    <script src="https://d3js.org/d3.v7.js"></script>
+    <title>Video Game Sales (Multi-Format) from 1982 to 2016</title>
     <style>
       body {
-        background-color: linen;
+        background-image: url("bg.jpg");
       }
-      h1 {
+      h1, h2 {
         color: black;
         text-align: center;
+        padding: 10px;
+        border: 2px solid #000000;
+        background-color: #dcf7ff;
+        width: 50%;
+        margin-left: 25%;
       }
     </style>
   </head>
 
   <body>
     <header>
-      <h1>Video Game Sales Exploration</h1>
+      <h1>An exploration into video game sales worldwide from 1982 to 2016</h1>
+      <h2>Visualization for Data Science CS-5630 / CS-6630 Fall 2022</h2>
     </header>
-
-    const svg = d3.select("#body");
-    svg
-      .attr("transform", "translate(0,0)")
-      .attr("height", 550)
-      .attr("Width", 700);
-    <script src="js/barchart.js"></script>
+    <div style="text-align:center">
+    <iframe src="mainPage.html" style="border:2px #000000 solid; background-color: #dcf7ff;" name="main" scrolling="no" frameborder="1" width="85%" height="1300px" margin-left="25%"></iframe>
+    </div>
   </body>
 </html>
