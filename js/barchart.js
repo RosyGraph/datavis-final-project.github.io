@@ -4,94 +4,31 @@ const margin = { top: 20, bottom: 20, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
 
-function animateBarchart(data) {
-  const years = Array.from(new Set(data.map((d) => +d.Year))).sort(
-    (a, b) => a - b
+function getEnabledVariables() {
+  const checkboxes = document.querySelectorAll(
+    "input[type=checkbox][name=variable]"
   );
-  const color = d3
-    .scaleOrdinal(d3.schemeCategory10)
-    .domain(Array.from(new Set(data.map((d) => d.Platform))));
-  startDisplayChain(data, years, color);
-  return data;
+  return Array.from(checkboxes)
+    .filter((i) => i.checked)
+    .map((i) => i.id);
 }
-function startDisplayChain(data, years, color, i = 0) {
+
+function animateBarchart(data) {
+  d3.select("div#multi-slider").select("button").text("Stop");
+  const years = Array.from(new Set(data.map((d) => +d.Year)))
+    .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
+    .sort((a, b) => a - b);
+  startDisplayChain(data, years);
+}
+
+function startDisplayChain(data, years, i = 0) {
+  if (!animationRunning) return;
   const year = years[i];
-
-  const filtered = data.filter((d) => {
-    return +d.Year === year;
-  });
-  const grouped = groupByPlatform(filtered);
-
-  const x = d3
-    .scaleBand()
-    .domain(grouped.map((g) => g.platform))
-    .range([0, innerWidth])
-    .padding(0.2);
-  const y = d3
-    .scaleLinear()
-    .range([innerHeight, 0])
-    .domain([0, d3.max(grouped.map((g) => g.sales))]);
-  const svg = d3.select("#barchart-svg");
-  svg
-    .selectAll("g.x-axis")
-    .data([year])
-    .join("g")
-    .classed("x-axis", true)
-    .attr("transform", `translate(${margin.left}, ${innerHeight + margin.top})`)
-    .transition("x-axis")
-    .duration(1000)
-    .call(d3.axisBottom(x));
-
-  svg
-    .selectAll("g.y-axis")
-    .data([year])
-    .join("g")
-    .classed("y-axis", true)
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
-    .transition("y-axis")
-    .duration(1000)
-    .call(d3.axisLeft(y));
-  svg
-    .selectAll("g.rects")
-    .data([year])
-    .join("g")
-    .classed("rects", true)
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
-    .selectAll("rect")
-    .data(grouped)
-    .join(
-      (enter) =>
-        enter
-          .append("rect")
-          .attr("x", (d) => x(d.platform))
-          .attr("fill", (d) => color(d.platform))
-          .attr("width", x.bandwidth()),
-      (update) =>
-        update
-          .transition("rects")
-          .attr("width", x.bandwidth())
-          .attr("height", (d) => y(0) - y(d.sales))
-          .attr("y", (d) => y(d.sales))
-          .attr("x", (d) => x(d.platform)),
-      (exit) => exit.transition("rects").attr("height", 0).style("opacity", 0)
-    )
-    .attr("fill", (d) => color(d.platform))
-    .transition("rects")
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => y(0) - y(d.sales))
-    .attr("y", (d) => y(d.sales))
-    .attr("x", (d) => x(d.platform))
-    .duration(2000)
-    .on("end", () => {
-      if (i < years.length - 2) startDisplayChain(data, years, color, i + 1);
-    });
-  return data;
-}
-function drawCharts(data, selectedVariables) {
-  // clear existing charts
-  d3.select("#barchart-div").selectAll("*").remove();
-
-  let year = parseInt(d3.select("#sliderRange").property("value"));
+  const selectedVariables = getEnabledVariables();
+  d3.select("#barchart-div")
+    .selectAll("svg")
+    .data(selectedVariables)
+    .join("svg");
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
@@ -107,39 +44,39 @@ function drawCharts(data, selectedVariables) {
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
-    let groupedData = groupByVariable(filtered, sortBy, element);
+    const groupedData = groupByVariable(filtered, sortBy, element);
 
-    let xDomain = groupedData.map((d) => d[element]).sort();
+    const xDomain = groupedData.map((d) => d[element]).sort();
 
-    let xScale = d3
+    const xScale = d3
       .scaleBand()
       .domain(xDomain)
       .range([0, innerWidth])
       .padding(0.2);
 
-    let yScale = d3
+    const yScale = d3
       .scaleLinear()
       .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]); // in each key, look for the maximum number
+      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
 
-    let color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
 
-    let svg = d3
-      .select("#barchart-div")
-      .append("svg")
+    const svg = d3
+      .selectAll("#barchart-div svg")
+      .filter((d) => d === element)
       .attr("id", element + "-barchart-svg")
       .classed("barchart", true)
       .attr("height", 400)
       .attr("width", 600);
 
-    svg.append("g").attr("id", "barchart-title");
-    svg.append("g").attr("id", "barchart-year");
-    svg.append("g").attr("id", "barchart-x-axis");
-    svg.append("g").attr("id", "barchart-y-axis");
-    svg.append("g").attr("id", "barchart-content");
+    svg.append("g").classed("barchart-title", true);
+    svg.append("g").classed("barchart-year", true);
+    svg.append("g").classed("barchart-x-axis", true);
+    svg.append("g").classed("barchart-y-axis", true);
+    svg.append("g").classed("barchart-content", true);
 
     svg
-      .select("#barchart-title")
+      .select("g.barchart-title")
       .selectAll("text")
       .data([element])
       .join("text")
@@ -147,7 +84,7 @@ function drawCharts(data, selectedVariables) {
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .select("#barchart-year")
+      .select("g.barchart-year")
       .selectAll("text")
       .data([year])
       .join("text")
@@ -155,7 +92,7 @@ function drawCharts(data, selectedVariables) {
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .selectAll("#barchart-x-axis")
+      .selectAll("g.barchart-x-axis")
       .data([year])
       .join("g")
       .classed("x-axis", true)
@@ -167,14 +104,14 @@ function drawCharts(data, selectedVariables) {
       .duration(1000)
       .call(d3.axisBottom(xScale));
     svg
-      .select("#barchart-y-axis")
+      .select("g.barchart-y-axis")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .transition("y-axis")
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
     svg
-      .select("#barchart-content")
+      .select("g.barchart-content")
       .selectAll("g")
       .data(groupedData)
       .join("g")
@@ -183,17 +120,149 @@ function drawCharts(data, selectedVariables) {
       // value2 contains the keys passed into the domain
       .data((d) =>
         Object.keys(d)
-          .filter((x, index) => index != 0)
+          .filter((_, index) => index != 0)
           .map((key) => ({
             key,
             value: d[key],
-            value2: Object.keys(d).filter((x, index) => index != 0),
+            value2: Object.keys(d).filter((_, index) => index != 0),
           }))
       )
-      //keys.map((key) => ({ key, value: d[key] })))
       .join("rect")
       .attr("x", (d) => {
-        let x1Scale = d3
+        const x1Scale = d3
+          .scaleBand()
+          .domain(d.value2)
+          .range([0, xScale.bandwidth()]);
+        return x1Scale(d.key) + 30;
+      }) // use the x1 variable to place the grouped bars
+      .attr("y", (d) => yScale(d.value) + 20)
+      .attr("width", (d) =>
+        d3
+          .scaleBand()
+          .domain(d.value2)
+          .range([0, xScale.bandwidth()])
+          .bandwidth()
+      )
+      .attr("height", (d) => yScale(0) - yScale(d.value))
+      .attr("fill", (d) => color(d.key))
+      .transition()
+      .delay(2000)
+      .on("end", () => {
+        if (year < selectedYears[1]) startDisplayChain(data, years, i + 1);
+      });
+  });
+  return data;
+}
+
+function drawCharts(data) {
+  const selectedVariables = getEnabledVariables();
+  d3.select("#barchart-div")
+    .selectAll("svg")
+    .data(selectedVariables)
+    .join("svg");
+
+  const year = selectedYears[0];
+
+  const filtered = data.filter((d) => {
+    return +d.Year === year;
+  });
+  const sortBy = d3.select("#sort-by-selection").property("value");
+
+  let keys;
+  if (sortBy === "Region") {
+    keys = ["Europe", "Global", "Japan", "North America", "Other"];
+  } else keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
+
+  addLegend(Array.from(keys));
+
+  // each element refers to a seperate bar chart
+  selectedVariables.forEach((element) => {
+    const groupedData = groupByVariable(filtered, sortBy, element);
+
+    const xDomain = groupedData.map((d) => d[element]).sort();
+
+    const xScale = d3
+      .scaleBand()
+      .domain(xDomain)
+      .range([0, innerWidth])
+      .padding(0.2);
+
+    const yScale = d3
+      .scaleLinear()
+      .range([innerHeight, 0])
+      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
+
+    const svg = d3
+      .selectAll("#barchart-div svg")
+      .filter((d) => d === element)
+      .attr("id", element + "-barchart-svg")
+      .classed("barchart", true)
+      .attr("height", 400)
+      .attr("width", 600);
+
+    svg.append("g").classed("barchart-title", true);
+    svg.append("g").classed("barchart-year", true);
+    svg.append("g").classed("barchart-x-axis", true);
+    svg.append("g").classed("barchart-y-axis", true);
+    svg.append("g").classed("barchart-content", true);
+
+    svg
+      .select("g.barchart-title")
+      .selectAll("text")
+      .data([element])
+      .join("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top)
+      .text((d) => d);
+    svg
+      .select("g.barchart-year")
+      .selectAll("text")
+      .data([year])
+      .join("text")
+      .attr("x", width - margin.right - 20)
+      .attr("y", margin.top)
+      .text((d) => d);
+    svg
+      .selectAll("g.barchart-x-axis")
+      .data([year])
+      .join("g")
+      .classed("x-axis", true)
+      .attr(
+        "transform",
+        `translate(${margin.left}, ${innerHeight + margin.top})`
+      )
+      .transition("x-axis")
+      .duration(1000)
+      .call(d3.axisBottom(xScale));
+    svg
+      .select("g.barchart-y-axis")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
+      .transition("y-axis")
+      .duration(1000)
+      .call(d3.axisLeft(yScale));
+
+    svg
+      .select("g.barchart-content")
+      .selectAll("g")
+      .data(groupedData)
+      .join("g")
+      .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
+      .selectAll("rect")
+      // value2 contains the keys passed into the domain
+      .data((d) =>
+        Object.keys(d)
+          .filter((_, index) => index != 0)
+          .map((key) => ({
+            key,
+            value: d[key],
+            value2: Object.keys(d).filter((_, index) => index != 0),
+          }))
+      )
+      .join("rect")
+      .attr("x", (d) => {
+        const x1Scale = d3
           .scaleBand()
           .domain(d.value2)
           .range([0, xScale.bandwidth()]);
@@ -213,71 +282,89 @@ function drawCharts(data, selectedVariables) {
   return data;
 }
 
-function groupByVariable(data, sortBy, variable) {
-  let rolledData = [];
+function aggregateByVariable(rolledData, variable) {
+  return Array.from(rolledData, ([variableName, count]) => {
+    const obj = {};
+    for (const [sortBy, num] of count) {
+      obj[variable] = variableName;
+      obj[sortBy] = num;
+    }
+    return obj;
+  });
+}
 
+function groupByVariable(data, sortBy, variable) {
+  // TODO: Add meaningful names to these variables
+  const aggregate = (rolledData) => aggregateByVariable(rolledData, variable);
   if (variable == "Region" && sortBy != "Region") {
     let temp0 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => "Global",
+      () => "Global",
       (d) => d[sortBy]
     );
     let temp1 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
-      (d) => "Europe",
+      () => "Europe",
       (d) => d[sortBy]
     );
     let temp2 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
-      (d) => "Japan",
+      () => "Japan",
       (d) => d[sortBy]
     );
     let temp3 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
-      (d) => "North America",
+      () => "North America",
       (d) => d[sortBy]
     );
     let temp4 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
-      (d) => "Other",
+      () => "Other",
       (d) => d[sortBy]
     );
-    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
+    const rolledData = new Map([
+      ...temp0,
+      ...temp1,
+      ...temp2,
+      ...temp3,
+      ...temp4,
+    ]);
+    return aggregate(rolledData, variable);
   } else if (sortBy == "Region" && variable != "Region") {
     let global = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
       (d) => d[variable],
-      (d) => "Global"
+      () => "Global"
     );
     let europe = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
       (d) => d[variable],
-      (d) => "Europe"
+      () => "Europe"
     );
     let japan = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
       (d) => d[variable],
-      (d) => "Japan"
+      () => "Japan"
     );
     let northAmerica = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
       (d) => d[variable],
-      (d) => "North America"
+      () => "North America"
     );
     let other = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
       (d) => d[variable],
-      (d) => "Other"
+      () => "Other"
     );
 
     // merges two maps with maps as value
@@ -293,97 +380,114 @@ function groupByVariable(data, sortBy, variable) {
       }
       return result;
     }
-    let temp = merge(global, europe);
-    let temp2 = merge(temp, japan);
-    let temp3 = merge(temp2, northAmerica);
-    let temp4 = merge(temp3, other);
-    rolledData = temp4;
+    const temp = merge(global, europe);
+    const temp2 = merge(temp, japan);
+    const temp3 = merge(temp2, northAmerica);
+    const temp4 = merge(temp3, other);
+    return aggregate(temp4, variable);
   } else if (sortBy == "Region" && variable == "Region") {
     let temp0 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => "Global",
-      (d) => "Global"
+      () => "Global",
+      () => "Global"
     );
     let temp1 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.EurpeanUnion_Sales),
-      (d) => "Europe",
-      (d) => "Europe"
+      () => "Europe",
+      () => "Europe"
     );
     let temp2 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Japan_Sales),
-      (d) => "Japan",
-      (d) => "Japan"
+      () => "Japan",
+      () => "Japan"
     );
     let temp3 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.NorthAmerica_Sales),
-      (d) => "North America",
-      (d) => "North America"
+      () => "North America",
+      () => "North America"
     );
     let temp4 = d3.rollup(
       data,
       (v) => d3.sum(v, (d) => d.Other_Sales),
-      (d) => "Other",
-      (d) => "Other"
+      () => "Other",
+      () => "Other"
     );
-    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
-  } else {
-    rolledData = d3.rollup(
-      data,
-      (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => d[variable],
-      (d) => d[sortBy]
-    );
+    const rolledData = new Map([
+      ...temp0,
+      ...temp1,
+      ...temp2,
+      ...temp3,
+      ...temp4,
+    ]);
+    return aggregate(rolledData, variable);
   }
-
-  let aggregate = Array.from(rolledData, ([variableName, count]) => {
-    const obj = {};
-    for (const [sortBy, num] of count) {
-      obj[variable] = variableName;
-      obj[sortBy] = num;
-    }
-    return obj;
-  });
-  return aggregate;
+  const rolledData = d3.rollup(
+    data,
+    (v) => d3.sum(v, (d) => d.Global_Sales),
+    (d) => d[variable],
+    (d) => d[sortBy]
+  );
+  return aggregate(rolledData, variable);
 }
 
 function addLegend(data) {
-  // color scale
   const color = d3.scaleOrdinal(d3.schemeCategory10).domain(data);
-  const legend = d3.select("#legend-svg");
+  const size = 20;
+  const y = d3
+    .scaleBand()
+    .domain(data)
+    .range([0, size * (data.length + 5)])
+    .padding(0.7);
 
-  // clears legend
-  legend.selectAll("*").remove();
-
-  let size = 20;
-
-  legend
+  const legendGroups = d3
+    .select("#legend-svg")
     .selectAll("g")
     .data(data)
-    .join("rect")
-    .attr("x", 50)
-    .attr("y", (_, i) => 10 + i * (size + 5))
-    .attr("width", size)
-    .attr("height", size)
-    .style("fill", (d) => color(d));
-
-  legend
-    .selectAll("g")
-    .data(data)
+    .join(
+      (enter) =>
+        enter.append("g").attr("transform", (d) => `translate(50, ${y(d)})`),
+      (update) =>
+        update
+          .transition()
+          .duration(1000)
+          .attr("transform", (d) => `translate(50, ${y(d)})`)
+    );
+  legendGroups
+    .selectAll("rect")
+    .data((d) => [d])
+    .join((enter) =>
+      enter
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", size)
+        .attr("height", size)
+        .style("fill", (d) => color(d))
+        .style("opacity", 0)
+        .transition()
+        .duration(500)
+        .style("opacity", 1)
+    );
+  legendGroups
+    .selectAll("text")
+    .data((d) => [d])
     .join("text")
-    .attr("x", 50 + size * 1.2)
-    .attr("y", function (_, i) {
-      return 10 + i * (size + 5) + size / 2;
-    })
-    .style("fill", function (d) {
-      return color(d);
-    })
-    .text(function (d) {
-      return d;
-    })
+    .attr("x", 0)
+    .attr("y", 0)
+    .selectAll("tspan")
+    .data((d) => [d])
+    .join("tspan")
+    .attr("x", size * 1.5 + y.padding())
+    .attr("y", size / 2)
+    .style("fill", (d) => color(d))
     .attr("text-anchor", "left")
-    .style("alignment-baseline", "middle");
+    .style("dominant-baseline", "middle")
+    .text((d) => d)
+    .style("opacity", 0)
+    .transition()
+    .style("opacity", 1);
 }
