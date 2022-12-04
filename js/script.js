@@ -1,5 +1,6 @@
 let data;
 let selectedYears;
+let animationRunning = false;
 loadData();
 
 function loadData() {
@@ -15,23 +16,24 @@ function setup(data) {
     .attr("height", 600)
     .attr("width", 200);
 
-  // add event listeners to objects in the toolbox
+  const onInputChange = () => {
+    drawCharts(data);
+    animationRunning = false;
+    d3.select("div#multi-slider").select("button").text("Go!");
+  };
   document
     .querySelector("#sort-by-selection")
-    .addEventListener("change", () => drawCharts(data));
+    .addEventListener("change", onInputChange);
 
-  // Select all checkboxes with the name 'variable' using querySelectorAll.
   const checkboxes = document.querySelectorAll(
     "input[type=checkbox][name=variable]"
   );
 
   checkboxes.forEach(function (checkbox) {
-    checkbox.addEventListener("change", function () {
-      drawCharts(data);
-    });
+    checkbox.addEventListener("change", onInputChange);
   });
 
-  // platform, genre, and publisher are defualt values selected
+  // platform, genre, and publisher are default values selected
   drawCharts(data);
   return data;
 }

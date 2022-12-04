@@ -14,6 +14,7 @@ function getEnabledVariables() {
 }
 
 function animateBarchart(data) {
+  d3.select("div#multi-slider").select("button").text("Stop");
   const years = Array.from(new Set(data.map((d) => +d.Year)))
     .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
     .sort((a, b) => a - b);
@@ -21,8 +22,13 @@ function animateBarchart(data) {
 }
 
 function startDisplayChain(data, years, i = 0) {
+  if (!animationRunning) return;
   const year = years[i];
   const selectedVariables = getEnabledVariables();
+  d3.select("#barchart-div")
+    .selectAll("svg")
+    .data(selectedVariables)
+    .join("svg");
 
   const filtered = data.filter((d) => {
     return +d.Year === year;
@@ -38,39 +44,39 @@ function startDisplayChain(data, years, i = 0) {
 
   // each element refers to a seperate bar chart
   selectedVariables.forEach((element) => {
-    let groupedData = groupByVariable(filtered, sortBy, element);
+    const groupedData = groupByVariable(filtered, sortBy, element);
 
-    let xDomain = groupedData.map((d) => d[element]).sort();
+    const xDomain = groupedData.map((d) => d[element]).sort();
 
-    let xScale = d3
+    const xScale = d3
       .scaleBand()
       .domain(xDomain)
       .range([0, innerWidth])
       .padding(0.2);
 
-    let yScale = d3
+    const yScale = d3
       .scaleLinear()
       .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]); // in each key, look for the maximum number
+      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
 
-    let color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
+    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
 
-    let svg = d3
-      .select("#barchart-div")
-      .append("svg")
+    const svg = d3
+      .selectAll("#barchart-div svg")
+      .filter((d) => d === element)
       .attr("id", element + "-barchart-svg")
       .classed("barchart", true)
       .attr("height", 400)
       .attr("width", 600);
 
-    svg.append("g").attr("id", "barchart-title");
-    svg.append("g").attr("id", "barchart-year");
-    svg.append("g").attr("id", "barchart-x-axis");
-    svg.append("g").attr("id", "barchart-y-axis");
-    svg.append("g").attr("id", "barchart-content");
+    svg.append("g").classed("barchart-title", true);
+    svg.append("g").classed("barchart-year", true);
+    svg.append("g").classed("barchart-x-axis", true);
+    svg.append("g").classed("barchart-y-axis", true);
+    svg.append("g").classed("barchart-content", true);
 
     svg
-      .select("#barchart-title")
+      .select("g.barchart-title")
       .selectAll("text")
       .data([element])
       .join("text")
@@ -78,7 +84,7 @@ function startDisplayChain(data, years, i = 0) {
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .select("#barchart-year")
+      .select("g.barchart-year")
       .selectAll("text")
       .data([year])
       .join("text")
@@ -86,7 +92,7 @@ function startDisplayChain(data, years, i = 0) {
       .attr("y", margin.top)
       .text((d) => d);
     svg
-      .selectAll("#barchart-x-axis")
+      .selectAll("g.barchart-x-axis")
       .data([year])
       .join("g")
       .classed("x-axis", true)
@@ -98,14 +104,14 @@ function startDisplayChain(data, years, i = 0) {
       .duration(1000)
       .call(d3.axisBottom(xScale));
     svg
-      .select("#barchart-y-axis")
+      .select("g.barchart-y-axis")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .transition("y-axis")
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
     svg
-      .select("#barchart-content")
+      .select("g.barchart-content")
       .selectAll("g")
       .data(groupedData)
       .join("g")
@@ -121,16 +127,15 @@ function startDisplayChain(data, years, i = 0) {
             value2: Object.keys(d).filter((_, index) => index != 0),
           }))
       )
-      //keys.map((key) => ({ key, value: d[key] })))
       .join("rect")
       .attr("x", (d) => {
-        let x1Scale = d3
+        const x1Scale = d3
           .scaleBand()
           .domain(d.value2)
           .range([0, xScale.bandwidth()]);
         return x1Scale(d.key) + 30;
       }) // use the x1 variable to place the grouped bars
-      .attr("y", (d) => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
+      .attr("y", (d) => yScale(d.value) + 20)
       .attr("width", (d) =>
         d3
           .scaleBand()
@@ -141,9 +146,9 @@ function startDisplayChain(data, years, i = 0) {
       .attr("height", (d) => yScale(0) - yScale(d.value))
       .attr("fill", (d) => color(d.key))
       .transition()
-      .duration(2000)
+      .delay(2000)
       .on("end", () => {
-        if (i < years.length - 2) startDisplayChain(data, years, color, i + 1);
+        if (year < selectedYears[1]) startDisplayChain(data, years, i + 1);
       });
   });
   return data;
