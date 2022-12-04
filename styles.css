@@ -2,7 +2,7 @@ html {
   min-height: 100%;
 }
 body {
-  background-image: linear-gradient(to bottom right, navy, lavender);
+        background-image: linear-gradient(to bottom right, #caffd2, white);
 }
 #barchart-content g rect {
   filter: drop-shadow(2px 2px 6px rgba(26, 32, 44, 0.5));
@@ -14,10 +14,10 @@ div.toolbox div {
   height: 125px;
 }
 h1 {
-  color: white;
+  color: black;
 }
 .toolbox {
-  color: white;
+  color: black;
 }
 #legend-div {
   float: left;
