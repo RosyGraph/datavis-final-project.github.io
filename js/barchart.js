@@ -277,9 +277,20 @@ function drawCharts(data) {
   return data;
 }
 
-function groupByVariable(data, sortBy, variable) {
-  let rolledData = [];
+function aggregateByVariable(rolledData, variable) {
+  return Array.from(rolledData, ([variableName, count]) => {
+    const obj = {};
+    for (const [sortBy, num] of count) {
+      obj[variable] = variableName;
+      obj[sortBy] = num;
+    }
+    return obj;
+  });
+}
 
+function groupByVariable(data, sortBy, variable) {
+  // TODO: Add meaningful names to these variables
+  const aggregate = (rolledData) => aggregateByVariable(rolledData, variable);
   if (variable == "Region" && sortBy != "Region") {
     let temp0 = d3.rollup(
       data,
@@ -311,7 +322,14 @@ function groupByVariable(data, sortBy, variable) {
       () => "Other",
       (d) => d[sortBy]
     );
-    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
+    const rolledData = new Map([
+      ...temp0,
+      ...temp1,
+      ...temp2,
+      ...temp3,
+      ...temp4,
+    ]);
+    return aggregate(rolledData, variable);
   } else if (sortBy == "Region" && variable != "Region") {
     let global = d3.rollup(
       data,
@@ -357,11 +375,11 @@ function groupByVariable(data, sortBy, variable) {
       }
       return result;
     }
-    let temp = merge(global, europe);
-    let temp2 = merge(temp, japan);
-    let temp3 = merge(temp2, northAmerica);
-    let temp4 = merge(temp3, other);
-    rolledData = temp4;
+    const temp = merge(global, europe);
+    const temp2 = merge(temp, japan);
+    const temp3 = merge(temp2, northAmerica);
+    const temp4 = merge(temp3, other);
+    return aggregate(temp4, variable);
   } else if (sortBy == "Region" && variable == "Region") {
     let temp0 = d3.rollup(
       data,
@@ -393,24 +411,22 @@ function groupByVariable(data, sortBy, variable) {
       () => "Other",
       () => "Other"
     );
-    rolledData = new Map([...temp0, ...temp1, ...temp2, ...temp3, ...temp4]);
-  } else {
-    rolledData = d3.rollup(
-      data,
-      (v) => d3.sum(v, (d) => d.Global_Sales),
-      (d) => d[variable],
-      (d) => d[sortBy]
-    );
+    const rolledData = new Map([
+      ...temp0,
+      ...temp1,
+      ...temp2,
+      ...temp3,
+      ...temp4,
+    ]);
+    return aggregate(rolledData, variable);
   }
-
-  return Array.from(rolledData, ([variableName, count]) => {
-    const obj = {};
-    for (const [sortBy, num] of count) {
-      obj[variable] = variableName;
-      obj[sortBy] = num;
-    }
-    return obj;
-  });
+  const rolledData = d3.rollup(
+    data,
+    (v) => d3.sum(v, (d) => d.Global_Sales),
+    (d) => d[variable],
+    (d) => d[sortBy]
+  );
+  return aggregate(rolledData, variable);
 }
 
 function addLegend(data) {
