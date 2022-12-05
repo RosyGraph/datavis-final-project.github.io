@@ -2,7 +2,6 @@
 
 Authored by Dominic Malouf, Karl Buckley, and Chris Stevenson. Hosted by [GitHub pages](http://rosygraph.github.io/datavis-final-project.github.io/). The screencast showing a demonstration of the visualization as well as some background and motivation for the visualization can be [viewed on YouTube](https://youtu.be/mYuujHEWHT4).
 
-
 ## Interface
 
 All interface for the visualization is (hopefully) intuitive. Features are documented [on YouTube](https://youtu.be/mYuujHEWHT4).
