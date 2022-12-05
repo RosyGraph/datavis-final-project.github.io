@@ -5,6 +5,12 @@ const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
 const fmtDollars = (d) => d3.format("$.1f")(d) + "M";
 
+function truncate(s, n) {
+  if (s.length < n) return s;
+  const sub = s.slice(0, n - 1);
+  return sub.slice(0, sub.lastIndexOf(" ")) + "...";
+}
+
 function getEnabledVariables() {
   const checkboxes = document.querySelectorAll(
     "input[type=checkbox][name=variable]"
@@ -132,7 +138,7 @@ function drawCharts(data, years, chain = false, i = 0) {
       .data([element])
       .join("text")
       .attr("x", width / 2)
-      .attr("y", margin.top)
+      .attr("y", margin.top - 5)
       .text((d) => d);
     svg
       .select("g.barchart-year")
@@ -155,6 +161,7 @@ function drawCharts(data, years, chain = false, i = 0) {
       .duration(1000)
       .call(d3.axisBottom(xScale))
       .selectAll("text")
+      .text((d) => truncate(d, 9))
       .attr("transform", "rotate(30)")
       .style("text-anchor", "start");
     svg
@@ -210,7 +217,8 @@ function drawCharts(data, years, chain = false, i = 0) {
         .transition()
         .delay(2000)
         .on("end", () => {
-          if (year < selectedYears[1]) drawCharts(data, years, true, i + 1);
+          if (year < selectedYears[1])
+            return drawCharts(data, years, true, i + 1);
         });
     }
   });
@@ -419,9 +427,11 @@ function addLegend(data) {
     .attr("x", size * 1.5 + y.padding())
     .attr("y", size / 2)
     .style("fill", (d) => color(d))
+    .style("stroke", (d) => d3.color(color(d)).darker(0.7))
+    .style("stroke-width", "0.5px")
     .attr("text-anchor", "left")
     .style("dominant-baseline", "middle")
-    .text((d) => d)
+    .text((d) => truncate(d, 15))
     .style("opacity", 0)
     .transition()
     .style("opacity", 1);
