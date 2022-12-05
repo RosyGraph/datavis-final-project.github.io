@@ -1,6 +1,6 @@
 datavis-final-project.github.io
 
-http://rosygraph.github.io/datavis-final-project.github.io/
+http://rosygraph.github.io/datavis-final-project.github.io/ <br>
 https://www.youtube.com/watch?v=mYuujHEWHT4
 
 data - dataset folder <br>
