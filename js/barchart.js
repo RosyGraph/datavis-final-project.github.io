@@ -69,12 +69,12 @@ function animateBarchart(data) {
   const years = Array.from(new Set(data.map((d) => +d.Year)))
     .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
     .sort((a, b) => a - b);
-  startDisplayChain(data, years);
+  drawCharts(data, years, true);
 }
 
-function startDisplayChain(data, years, i = 0) {
-  if (!animationRunning) return;
-  const year = years[i];
+function drawCharts(data, years, chain = false, i = 0) {
+  if (chain && !animationRunning) return;
+  const year = chain ? years[i] : selectedYears[0];
   const selectedVariables = getEnabledVariables();
   d3.select("#barchart-div")
     .selectAll("svg")
@@ -164,7 +164,7 @@ function startDisplayChain(data, years, i = 0) {
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
-    svg
+    const selection = svg
       .select("g.barchart-content")
       .selectAll("g")
       .data(groupedData)
@@ -204,149 +204,15 @@ function startDisplayChain(data, years, i = 0) {
       .attr("fill", (d) => color(d.key))
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave)
-      .transition()
-      .delay(2000)
-      .on("end", () => {
-        if (year < selectedYears[1]) startDisplayChain(data, years, i + 1);
-      });
-  });
-  return data;
-}
-
-function drawCharts(data) {
-  const selectedVariables = getEnabledVariables();
-  d3.select("#barchart-div")
-    .selectAll("svg")
-    .data(selectedVariables)
-    .join("svg");
-
-  const year = selectedYears[0];
-
-  const filtered = data.filter((d) => {
-    return +d.Year === year;
-  });
-  const sortBy = d3.select("#sort-by-selection").property("value");
-
-  let keys;
-  if (sortBy === "Region") {
-    keys = ["Europe", "Global", "Japan", "North America", "Other"];
-  } else keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
-
-  addLegend(Array.from(keys));
-
-  // each element refers to a seperate bar chart
-  selectedVariables.forEach((element) => {
-    const groupedData = groupByVariable(filtered, sortBy, element);
-
-    const xDomain = groupedData.map((d) => d[element]).sort();
-
-    const xScale = d3
-      .scaleBand()
-      .domain(xDomain)
-      .range([0, innerWidth])
-      .padding(0.2);
-
-    const yScale = d3
-      .scaleLinear()
-      .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
-
-    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
-
-    const svg = d3
-      .selectAll("#barchart-div svg")
-      .filter((d) => d === element)
-      .attr("id", element + "-barchart-svg")
-      .classed("barchart", true)
-      .attr("height", height)
-      .attr("width", width);
-
-    svg.append("g").classed("barchart-title", true);
-    svg.append("g").classed("barchart-year", true);
-    svg.append("g").classed("barchart-x-axis", true);
-    svg.append("g").classed("barchart-y-axis", true);
-    svg.append("g").classed("barchart-content", true);
-
-    svg
-      .select("g.barchart-title")
-      .selectAll("text")
-      .data([element])
-      .join("text")
-      .attr("x", width / 2)
-      .attr("y", margin.top)
-      .text((d) => d);
-    svg
-      .select("g.barchart-year")
-      .selectAll("text")
-      .data([year])
-      .join("text")
-      .attr("x", width - margin.right - 20)
-      .attr("y", margin.top)
-      .text((d) => d);
-    svg
-      .selectAll("g.barchart-x-axis")
-      .data([year])
-      .join("g")
-      .classed("x-axis", true)
-      .attr(
-        "transform",
-        `translate(${margin.left}, ${innerHeight + margin.top})`
-      )
-      .transition("x-axis")
-      .duration(1000)
-      .call(d3.axisBottom(xScale))
-      .selectAll("text")
-      .attr("transform", "rotate(30)")
-      .style("text-anchor", "start");
-    svg
-      .select("g.barchart-y-axis")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`)
-      .transition("y-axis")
-      .duration(1000)
-      .call(d3.axisLeft(yScale));
-
-    svg
-      .select("g.barchart-content")
-      .selectAll("g")
-      .data(groupedData)
-      .join("g")
-      .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
-      .selectAll("rect")
-      // value2 contains the keys passed into the domain
-      .data((d) =>
-        Object.keys(d)
-          .filter((_, index) => index != 0)
-          .map((key) => ({
-            key,
-            value: d[key],
-            value2: Object.keys(d).filter((_, index) => index != 0),
-            value3: element,
-            value4: sortBy,
-            value5: d[element],
-          }))
-      )
-      .join("rect")
-      .attr("x", (d) => {
-        const x1Scale = d3
-          .scaleBand()
-          .domain(d.value2)
-          .range([0, xScale.bandwidth()]);
-        return x1Scale(d.key) + 30;
-      }) // use the x1 variable to place the grouped bars
-      .attr("y", (d) => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
-      .attr("width", (d) =>
-        d3
-          .scaleBand()
-          .domain(d.value2)
-          .range([0, xScale.bandwidth()])
-          .bandwidth()
-      )
-      .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key))
-      .on("mouseover", mouseover)
-      .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
+    if (chain) {
+      selection
+        .transition()
+        .delay(2000)
+        .on("end", () => {
+          if (year < selectedYears[1]) drawCharts(data, years, true, i + 1);
+        });
+    }
   });
   return data;
 }
