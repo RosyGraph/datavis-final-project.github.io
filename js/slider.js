@@ -8,7 +8,7 @@ function renderMultislider(data) {
     .min(d3.min(years))
     .max(d3.max(years))
     .width(200)
-    .step(1)
+    .marks(years.sort(d3.ascending))
     .ticks(3)
     .tickFormat(d3.format(".0f"))
     .default(d3.extent(years))
