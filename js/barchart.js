@@ -4,6 +4,7 @@ const margin = { top: 20, bottom: 60, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
 const fmtDollars = (d) => d3.format("$.1f")(d) + "M";
+const tooltipOffset = { left: 50, top: -50 };
 
 function truncate(s, n) {
   if (s.length < n) return s;
@@ -28,7 +29,6 @@ function mouseover(e) {
 }
 
 function mousemove(e, d) {
-  const tooltipOffset = { left: 50, top: -50 };
   d3.select("div#tooltip-div")
     .style("left", `${e.clientX + tooltipOffset.left}px`)
     .style("top", `${e.clientY + tooltipOffset.top}px`);
@@ -60,8 +60,7 @@ function mousemove(e, d) {
           "Sales: " +
           fmtDollars(d.value)
         );
-    })
-    .attr("transform", `translate(${0}, ${15})`);
+    });
 }
 
 function mouseleave() {
@@ -392,7 +391,29 @@ function addLegend(data) {
     .data(data)
     .join(
       (enter) =>
-        enter.append("g").attr("transform", (d) => `translate(50, ${y(d)})`),
+        enter
+          .append("g")
+          .attr("transform", (d) => `translate(50, ${y(d)})`)
+          .on("mouseover", () => {
+            d3.select("div#tooltip-div")
+              .style("opacity", 0.8)
+              .style("visibility", "visible");
+          })
+          .on("mousemove", (e, d) => {
+            d3.select("div#tooltip-div")
+              .style("left", `${e.clientX + tooltipOffset.left}px`)
+              .style("top", `${e.clientY + tooltipOffset.top}px`);
+            d3.select("div#tooltip-div")
+              .selectAll("text")
+              .data([d])
+              .join("text")
+              .text((d) => d);
+          })
+          .on("mouseleave", () => {
+            d3.select("div#tooltip-div")
+              .style("opacity", 0)
+              .style("visibility", "hidden");
+          }),
       (update) =>
         update
           .transition()
