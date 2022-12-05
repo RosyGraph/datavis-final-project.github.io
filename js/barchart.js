@@ -3,6 +3,7 @@ const height = 400,
 const margin = { top: 20, bottom: 60, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
+const fmtDollars = (d) => d3.format("$.1f")(d) + "M";
 
 function getEnabledVariables() {
   const checkboxes = document.querySelectorAll(
@@ -25,9 +26,8 @@ function mousemove(e, d) {
   d3.select("div#tooltip-div")
     .style("left", `${e.clientX + tooltipOffset.left}px`)
     .style("top", `${e.clientY + tooltipOffset.top}px`);
-  const tooltip = d3.select("div#tooltip-div");
 
-  tooltip
+  d3.select("div#tooltip-div")
     .selectAll("text")
     .data([d])
     .join("text")
@@ -52,7 +52,7 @@ function mousemove(e, d) {
           d.value5 +
           ",\n" +
           "Sales: " +
-          parseFloat(d.value.toFixed(2))
+          fmtDollars(d.value)
         );
     })
     .attr("transform", `translate(${0}, ${15})`);
