@@ -14,15 +14,18 @@ function getEnabledVariables() {
 }
 
 function mouseover(e) {
-  d3.select("div#tooltip-div").style("opacity", 1);
+  d3.select("div#tooltip-div")
+    .style("opacity", 0.8)
+    .style("visibility", "visible");
   d3.select(e.target).style("stroke", "black").style("opacity", 1);
 }
 
-function mousemove(event, d) {
-  const x = event.clientX;
-  const y = event.clientY;
+function mousemove(e, d) {
+  const tooltipOffset = { left: 50, top: -50 };
+  d3.select("div#tooltip-div")
+    .style("left", `${e.clientX + tooltipOffset.left}px`)
+    .style("top", `${e.clientY + tooltipOffset.top}px`);
   const tooltip = d3.select("div#tooltip-div");
-  tooltip.attr("transform", `translate(${x - 400}, ${y - 275})`);
 
   tooltip
     .selectAll("text")
@@ -56,10 +59,10 @@ function mousemove(event, d) {
 }
 
 function mouseleave() {
-  const tooltip = d3.select("div#tooltip-div");
-  tooltip.style("opacity", 0);
+  d3.select("div#tooltip-div")
+    .style("opacity", 0)
+    .style("visibility", "hidden");
   d3.select(this).style("stroke", "none");
-  tooltip.attr("transform", `translate(${0}, ${0})`);
 }
 
 function animateBarchart(data) {

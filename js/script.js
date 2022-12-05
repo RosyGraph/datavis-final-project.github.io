@@ -16,17 +16,7 @@ function setup(data) {
     .attr("height", 600)
     .attr("width", 200);
 
-  d3.select("#tooltip-div")
-    .append("svg")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "lightblue")
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
-    .attr("height", 20)
-    .attr("width", 450);
+  d3.select("#tooltip-div").style("opacity", 0).style("visibility", "hidden");
 
   const onInputChange = () => {
     drawCharts(data);
