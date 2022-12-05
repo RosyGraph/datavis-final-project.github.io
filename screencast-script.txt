@@ -1,0 +1,13 @@
+In 1983, following the success of titles such as 1978's "Space Invaders," and 1981's "Donkey Kong," the video game industry in North America took a nose dive. Publication of low-quality games and market oversaturation caused the bankruptcy of many top video game companies.
+
+So, how did the video game industry recover? In this visualization, we set out to answer this question and more. What best-selling games made economic recovery possible for which publishers over what time period? How did genre-preference shift for consumers over time?
+
+To do this, we used Kaggle's data set simply titled, "video_games_dataset.csv," to plot 5 different variables across the years 1982 to 2016.
+
+The data can be categorized using a dropdown. This allows the user to select which variable will be shown on each of the barcharts, and this information is encoded using categorical colors.
+
+Barcharts can be added to or removed from the visualization using checkboxes, grouping the variable selected in the dropdown into either games, platforms, genre, region, or publisher. Use of the dropdown in combination with these checkboxes allows the user to view many relationships in the data.
+
+The slider, marked with various years available in the data, serves two functions. A single point in time can be referenced, or a range of years can be selected. Clicking "Go!" begins a journey through the selected data range. During this animation, the user may observed trends through time over several different variables.
+
+This visualization allows the user to confidently answer questions regarding the details of video game sales over time by providing a ton of different avenues for visualizing the variables relevant to their questions.
