@@ -1,6 +1,7 @@
 datavis-final-project.github.io
 
 http://rosygraph.github.io/datavis-final-project.github.io/
+https://www.youtube.com/watch?v=mYuujHEWHT4
 
 data - dataset folder <br>
 &nbsp; &nbsp; video_games_dataset.csv - dataset <br>
