@@ -4,7 +4,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 3,Mario Kart Wii,Wii,2008,Racing,Nintendo,,12.88,3.79,,35.82
 4,Wii Sports Resort,Wii,2009,Sports,Nintendo,15.75,11.01,,2.96,33
 5,Pokemon Red/Pokemon Blue,GB,1996,Role-Playing,Nintendo,11.27,8.89,10.22,1,31.37
-6,Tetris,GB,1989,Puzzle,Nintendo,23.2,2.26,4.22,0.58,
+6,Tetris,GB,1989,Puzzle,Nintendo,23.2,2.26,4.22,0.58,30.26
 7,New Super Mario Bros.,DS,2006,Platform,Nintendo,11.38,9.23,6.5,2.9,30.01
 8,Wii Play,Wii,2006,Misc,Nintendo,14.03,9.2,2.93,2.85,29.02
 9,New Super Mario Bros. Wii,Wii,2009,Platform,Nintendo,14.59,7.06,,2.26,28.62
@@ -12,9 +12,9 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 11,Nintendogs,DS,2005,Simulation,Nintendo,9.07,11,1.93,2.75,24.76
 12,Mario Kart DS,DS,2005,Racing,Nintendo,9.81,7.57,4.13,1.92,23.42
 13,Pokemon Gold/Pokemon Silver,GB,1999,Role-Playing,Nintendo,,6.18,7.2,0.71,23.1
-14,Wii Fit,Wii,2007,Sports,Nintendo,8.94,8.03,3.6,2.15,
+14,Wii Fit,Wii,2007,Sports,Nintendo,8.94,8.03,3.6,2.15,22.72
 15,Wii Fit Plus,Wii,2009,Sports,Nintendo,9.09,8.59,2.53,1.79,22
-16,Kinect Adventures!,X360,2010,Misc,Microsoft Game Studios,14.97,4.94,0.24,1.67,
+16,Kinect Adventures!,X360,2010,Misc,Microsoft Game Studios,14.97,4.94,0.24,1.67,21.82
 17,Grand Theft Auto V,PS3,2013,Action,Take-Two Interactive,7.01,9.27,0.97,4.14,21.4
 19,Super Mario World,SNES,1990,Platform,Nintendo,12.78,,3.54,0.55,20.61
 20,Brain Age: Train Your Brain in Minutes a Day,DS,2005,Misc,Nintendo,4.75,9.26,,2.05,20.22
@@ -38,7 +38,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 41,Call of Duty: Black Ops,PS3,2010,Shooter,Activision,5.98,4.44,0.48,1.83,12.73
 42,Animal Crossing: Wild World,DS,2005,Simulation,Nintendo,,3.52,5.33,0.88,12.27
 43,Mario Kart 7,3DS,2011,Racing,Nintendo,4.74,3.91,2.67,0.89,12.21
-44,Halo 3,X360,2007,Shooter,Microsoft Game Studios,7.97,2.83,0.13,1.21,
+44,Halo 3,X360,2007,Shooter,Microsoft Game Studios,7.97,2.83,0.13,1.21,12.14
 45,Grand Theft Auto V,PS4,2014,Action,Take-Two Interactive,3.8,5.81,0.36,2.02,11.98
 46,Pokemon HeartGold/Pokemon SoulSilver,DS,2009,Action,Nintendo,,2.77,3.96,0.77,11.9
 47,Super Mario 64,N64,1996,Platform,Nintendo,6.91,2.85,1.91,0.23,11.89
@@ -63,7 +63,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 67,Final Fantasy VII,PS,1997,Role-Playing,Sony Computer Entertainment,3.01,2.47,3.28,0.96,9.72
 68,Call of Duty: Ghosts,PS3,2013,Shooter,Activision,4.09,3.73,0.38,1.38,9.59
 69,Just Dance 2,Wii,2010,Misc,Ubisoft,5.84,2.89,,0.78,9.52
-70,Gran Turismo 2,PS,1999,Racing,Sony Computer Entertainment,3.88,3.42,1.69,0.5,
+70,Gran Turismo 2,PS,1999,Racing,Sony Computer Entertainment,3.88,3.42,1.69,0.5,9.49
 71,Call of Duty 4: Modern Warfare,X360,2007,Shooter,Activision,5.91,2.38,0.13,0.9,9.32
 72,Donkey Kong Country,SNES,1994,Platform,Nintendo,4.36,1.71,3,0.23,9.3
 73,Minecraft,X360,2013,Misc,Microsoft Game Studios,5.58,2.83,0.02,0.77,9.2
@@ -88,7 +88,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 93,Star Wars Battlefront (2015),PS4,2015,Shooter,Electronic Arts,2.93,3.29,,1.23,7.67
 94,Call of Duty: Advanced Warfare,PS4,2014,Shooter,Activision,2.8,3.3,0.14,1.37,7.6
 95,The Legend of Zelda: Ocarina of Time,N64,1998,Action,Nintendo,4.1,1.89,1.45,0.16,7.6
-96,Crash Bandicoot 2: Cortex Strikes Back,PS,1997,Platform,Sony Computer Entertainment,3.78,2.17,1.31,0.31,
+96,Crash Bandicoot 2: Cortex Strikes Back,PS,1997,Platform,Sony Computer Entertainment,3.78,2.17,1.31,0.31,7.57
 97,Super Mario Bros. 2,NES,1988,Platform,Nintendo,5.39,1.18,0.7,0.19,7.46
 98,Super Smash Bros. for Wii U and 3DS,3DS,2014,Fighting,Nintendo,3.24,1.35,2.42,0.43,7.45
 99,Call of Duty: World at War,X360,2008,Shooter,Activision,,1.9,0,0.69,7.37
@@ -105,7 +105,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 111,Mario Kart: Double Dash!!,GC,2003,Racing,Nintendo,4.12,1.77,,0.19,6.95
 116,Uncharted 3: Drake's Deception,PS3,2011,Action,Sony Computer Entertainment,2.77,2.8,0.19,1.06,6.83
 117,Crash Bandicoot,PS,1996,Platform,Sony Computer Entertainment,3.23,2.35,0.94,0.3,6.82
-118,Zumba Fitness,Wii,2010,Sports,505 Games,3.5,2.64,0,0.67,
+118,Zumba Fitness,Wii,2010,Sports,505 Games,3.5,2.64,0,0.67,6.81
 119,Gears of War 2,X360,2008,Shooter,Microsoft Game Studios,4.15,1.92,0.06,0.64,6.76
 120,Uncharted 2: Among Thieves,PS3,2009,Action,Sony Computer Entertainment,3.27,2.25,0.21,1,6.73
 121,Call of Duty 4: Modern Warfare,PS3,2007,Shooter,Activision,3.1,2.3,0.28,1.04,6.72
@@ -140,12 +140,12 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 153,Tekken 2,PS,1996,Fighting,Sony Computer Entertainment,,1.89,1.36,0.23,5.74
 154,Cooking Mama,DS,2006,Simulation,505 Games,3.13,1.94,0.07,0.58,5.72
 155,Destiny,PS4,2014,Shooter,Activision,2.49,2.05,0.16,0.96,5.65
-156,Tetris,NES,1988,Puzzle,Nintendo,2.97,,1.81,0.11,
+156,Tetris,NES,1988,Puzzle,Nintendo,2.97,,1.81,0.11,5.6
 157,Assassin's Creed II,PS3,2009,Action,Ubisoft,2.54,1.95,0.21,0.87,5.57
-158,Super Smash Bros.,N64,1999,Fighting,Nintendo,2.95,0.6,1.97,0.04,
+158,Super Smash Bros.,N64,1999,Fighting,Nintendo,2.95,0.6,1.97,0.04,5.56
 159,Assassin's Creed,X360,2007,Adventure,Ubisoft,3.28,1.65,0.07,0.55,5.55
 160,Batman: Arkham City,PS3,2011,Action,Warner Bros. Interactive Entertainment,2.7,1.91,0.11,0.8,5.53
-161,Forza Motorsport 3,X360,2009,Racing,Microsoft Game Studios,2.99,1.92,0.1,0.51,
+161,Forza Motorsport 3,X360,2009,Racing,Microsoft Game Studios,2.99,1.92,0.1,0.51,5.51
 162,Monster Hunter Freedom Unite,PSP,2008,Role-Playing,Capcom,0.47,0.57,4.13,0.34,5.5
 163,Super Mario Advance,GBA,2001,Platform,Nintendo,3.14,1.24,0.91,0.2,5.49
 164,Mario Kart: Super Circuit,GBA,2001,Racing,Nintendo,2.62,1.64,0.99,0.23,5.47
@@ -189,7 +189,7 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 213,LEGO Star Wars: The Complete Saga,DS,2007,Action,LucasArts,2.89,1.54,0,,4.9
 214,Diddy Kong Racing,N64,1997,Racing,Nintendo,2.91,0.99,0.89,0.1,4.88
 215,Monster Hunter Freedom 3,PSP,2010,Role-Playing,Capcom,0,0,4.87,0,4.87
-216,Dr. Mario,NES,1990,Puzzle,Nintendo,2.62,0.6,1.52,0.1,
+216,Dr. Mario,NES,1990,Puzzle,Nintendo,2.62,0.6,1.52,0.1,4.85
 217,God of War III,PS3,2010,Action,Sony Computer Entertainment,2.74,1.36,0.12,0.63,4.84
 218,StarCraft II: Wings of Liberty,PC,2010,Strategy,Activision,2.56,1.68,0,0.59,4.83
 219,Assassin's Creed,PS3,2007,Adventure,Ubisoft,1.91,2,0.09,0.83,4.83
@@ -197,4 +197,4 @@ Rank,Name,Platform,Year,Genre,Publisher,NorthAmerica_Sales,EurpeanUnion_Sales,Ja
 221,Crash Team Racing,PS,1999,Racing,Sony Computer Entertainment,2.57,1.57,0.44,0.21,4.79
 222,FIFA 17,PS4,2016,Sports,Electronic Arts,0.28,3.75,0.06,0.69,4.77
 223,Batman: Arkham City,X360,2011,Action,Warner Bros. Interactive Entertainment,2.99,1.31,0.04,0.41,4.76
-224,Driver 2,PS,2000,Action,,2.36,2.1,0.02,0.25,
+224,Driver 2,PS,2000,Action,,2.36,2.1,0.02,0.25,4.73
