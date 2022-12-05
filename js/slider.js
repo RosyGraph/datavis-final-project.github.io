@@ -29,6 +29,11 @@ function renderMultislider(data) {
   gRange.call(sliderRange);
   button.on("click", () => {
     animationRunning = !animationRunning;
-    if (animationRunning) animateBarchart(data);
+    if (animationRunning) {
+      animateBarchart(data);
+      button.text("Stop");
+    } else {
+      button.text("Go!");
+    }
   });
 }

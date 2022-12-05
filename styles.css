@@ -22,3 +22,12 @@ h1 {
 #legend-div {
   float: left;
 }
+.tooltip {
+  display: inline;
+  position: fixed;
+  background-color: lightblue;
+  border: solid;
+  border-width: 5px;
+  padding: 5px;
+  pointer-events: none;
+}

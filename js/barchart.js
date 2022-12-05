@@ -3,6 +3,14 @@ const height = 400,
 const margin = { top: 20, bottom: 60, left: 30, right: 20 };
 const innerHeight = height - margin.top - margin.bottom,
   innerWidth = width - margin.left - margin.right;
+const fmtDollars = (d) => d3.format("$.1f")(d) + "M";
+const tooltipOffset = { left: 50, top: -50 };
+
+function truncate(s, n) {
+  if (s.length < n) return s;
+  const sub = s.slice(0, n - 1);
+  return sub.slice(0, sub.lastIndexOf(" ")) + "...";
+}
 
 function getEnabledVariables() {
   const checkboxes = document.querySelectorAll(
@@ -13,17 +21,65 @@ function getEnabledVariables() {
     .map((i) => i.id);
 }
 
+function mouseover(e) {
+  d3.select("div#tooltip-div")
+    .style("opacity", 0.8)
+    .style("visibility", "visible");
+  d3.select(e.target).style("stroke", "black").style("opacity", 1);
+}
+
+function mousemove(e, d) {
+  d3.select("div#tooltip-div")
+    .style("left", `${e.clientX + tooltipOffset.left}px`)
+    .style("top", `${e.clientY + tooltipOffset.top}px`);
+
+  d3.select("div#tooltip-div")
+    .selectAll("text")
+    .data([d])
+    .join("text")
+    .text((d) => {
+      if (d.value4 == d.value3)
+        return (
+          d.value4 +
+          ": " +
+          d.key +
+          ",\n" +
+          "Sales: " +
+          parseFloat(d.value.toFixed(2))
+        );
+      else
+        return (
+          d.value4 +
+          ": " +
+          d.key +
+          ",\n" +
+          d.value3 +
+          ": " +
+          d.value5 +
+          ",\n" +
+          "Sales: " +
+          fmtDollars(d.value)
+        );
+    });
+}
+
+function mouseleave() {
+  d3.select("div#tooltip-div")
+    .style("opacity", 0)
+    .style("visibility", "hidden");
+  d3.select(this).style("stroke", "none");
+}
+
 function animateBarchart(data) {
-  d3.select("div#multi-slider").select("button").text("Stop");
   const years = Array.from(new Set(data.map((d) => +d.Year)))
     .filter((d) => d >= selectedYears[0] && d <= selectedYears[1])
     .sort((a, b) => a - b);
-  startDisplayChain(data, years);
+  drawCharts(data, years, true);
 }
 
-function startDisplayChain(data, years, i = 0) {
-  if (!animationRunning) return;
-  const year = years[i];
+function drawCharts(data, years, chain = false, i = 0) {
+  if (chain && !animationRunning) return;
+  const year = chain ? years[i] : selectedYears[0];
   const selectedVariables = getEnabledVariables();
   d3.select("#barchart-div")
     .selectAll("svg")
@@ -81,7 +137,7 @@ function startDisplayChain(data, years, i = 0) {
       .data([element])
       .join("text")
       .attr("x", width / 2)
-      .attr("y", margin.top)
+      .attr("y", margin.top - 5)
       .text((d) => d);
     svg
       .select("g.barchart-year")
@@ -104,6 +160,7 @@ function startDisplayChain(data, years, i = 0) {
       .duration(1000)
       .call(d3.axisBottom(xScale))
       .selectAll("text")
+      .text((d) => truncate(d, 9))
       .attr("transform", "rotate(30)")
       .style("text-anchor", "start");
     svg
@@ -113,7 +170,7 @@ function startDisplayChain(data, years, i = 0) {
       .duration(1000)
       .call(d3.axisLeft(yScale));
 
-    svg
+    const selection = svg
       .select("g.barchart-content")
       .selectAll("g")
       .data(groupedData)
@@ -130,7 +187,7 @@ function startDisplayChain(data, years, i = 0) {
             value2: Object.keys(d).filter((_, index) => index != 0),
             value3: element,
             value4: sortBy,
-            value5: d[element]
+            value5: d[element],
           }))
       )
       .join("rect")
@@ -150,152 +207,19 @@ function startDisplayChain(data, years, i = 0) {
           .bandwidth()
       )
       .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
-      .on("mouseover", mouseover)
-      .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave)
-      .transition()
-      .delay(2000)
-      .on("end", () => {
-        if (year < selectedYears[1]) startDisplayChain(data, years, i + 1);
-      });
-  });
-  return data;
-}
-
-function drawCharts(data) {
-  const selectedVariables = getEnabledVariables();
-  d3.select("#barchart-div")
-    .selectAll("svg")
-    .data(selectedVariables)
-    .join("svg");
-
-  const year = selectedYears[0];
-
-  const filtered = data.filter((d) => {
-    return +d.Year === year;
-  });
-  const sortBy = d3.select("#sort-by-selection").property("value");
-
-  let keys;
-  if (sortBy === "Region") {
-    keys = ["Europe", "Global", "Japan", "North America", "Other"];
-  } else keys = Array.from(new Set(filtered.map((d) => d[sortBy])));
-
-  addLegend(Array.from(keys));
-
-  // each element refers to a seperate bar chart
-  selectedVariables.forEach((element) => {
-    const groupedData = groupByVariable(filtered, sortBy, element);
-
-    const xDomain = groupedData.map((d) => d[element]).sort();
-
-    const xScale = d3
-      .scaleBand()
-      .domain(xDomain)
-      .range([0, innerWidth])
-      .padding(0.2);
-
-    const yScale = d3
-      .scaleLinear()
-      .range([innerHeight, 0])
-      .domain([0, d3.max(groupedData, (d) => d3.max(keys, (key) => d[key]))]);
-
-    const color = d3.scaleOrdinal(d3.schemeCategory10).domain(keys);
-
-    const svg = d3
-      .selectAll("#barchart-div svg")
-      .filter((d) => d === element)
-      .attr("id", element + "-barchart-svg")
-      .classed("barchart", true)
-      .attr("height", height)
-      .attr("width", width);
-
-    svg.append("g").classed("barchart-title", true);
-    svg.append("g").classed("barchart-year", true);
-    svg.append("g").classed("barchart-x-axis", true);
-    svg.append("g").classed("barchart-y-axis", true);
-    svg.append("g").classed("barchart-content", true);
-
-    svg
-      .select("g.barchart-title")
-      .selectAll("text")
-      .data([element])
-      .join("text")
-      .attr("x", width / 2)
-      .attr("y", margin.top)
-      .text((d) => d);
-    svg
-      .select("g.barchart-year")
-      .selectAll("text")
-      .data([year])
-      .join("text")
-      .attr("x", width - margin.right - 20)
-      .attr("y", margin.top)
-      .text((d) => d);
-    svg
-      .selectAll("g.barchart-x-axis")
-      .data([year])
-      .join("g")
-      .classed("x-axis", true)
-      .attr(
-        "transform",
-        `translate(${margin.left}, ${innerHeight + margin.top})`
-      )
-      .transition("x-axis")
-      .duration(1000)
-      .call(d3.axisBottom(xScale))
-      .selectAll("text")
-      .attr("transform", "rotate(30)")
-      .style("text-anchor", "start");
-    svg
-      .select("g.barchart-y-axis")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`)
-      .transition("y-axis")
-      .duration(1000)
-      .call(d3.axisLeft(yScale));
-
-    svg
-      .select("g.barchart-content")
-      .selectAll("g")
-      .data(groupedData)
-      .join("g")
-      .attr("transform", (d) => `translate(${xScale(d[element])},0)`)
-      .selectAll("rect")
-      // value2 contains the keys passed into the domain
-      .data((d) =>
-        Object.keys(d)
-          .filter((_, index) => index != 0)
-          .map((key) => ({
-            key,
-            value: d[key],
-            value2: Object.keys(d).filter((_, index) => index != 0),
-            value3: element,
-            value4: sortBy,
-            value5: d[element]
-          }))
-      )
-      .join("rect")
-      .attr("x", (d) => {
-        const x1Scale = d3
-          .scaleBand()
-          .domain(d.value2)
-          .range([0, xScale.bandwidth()]);
-        return x1Scale(d.key) + 30;
-      }) // use the x1 variable to place the grouped bars
-      .attr("y", (d) => yScale(d.value) + 20) // draw the height of the barse using the data from the Male/Female keys as the height value
-      .attr("width", (d) =>
-        d3
-          .scaleBand()
-          .domain(d.value2)
-          .range([0, xScale.bandwidth()])
-          .bandwidth()
-      )
-      .attr("height", (d) => yScale(0) - yScale(d.value))
-      .attr("fill", (d) => color(d.key)) // color each bar according to its key value as defined by the color variable
+      .attr("fill", (d) => color(d.key))
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
+    if (chain) {
+      selection
+        .transition()
+        .delay(2000)
+        .on("end", () => {
+          if (year < selectedYears[1])
+            return drawCharts(data, years, true, i + 1);
+        });
+    }
   });
   return data;
 }
@@ -467,7 +391,29 @@ function addLegend(data) {
     .data(data)
     .join(
       (enter) =>
-        enter.append("g").attr("transform", (d) => `translate(50, ${y(d)})`),
+        enter
+          .append("g")
+          .attr("transform", (d) => `translate(50, ${y(d)})`)
+          .on("mouseover", () => {
+            d3.select("div#tooltip-div")
+              .style("opacity", 0.8)
+              .style("visibility", "visible");
+          })
+          .on("mousemove", (e, d) => {
+            d3.select("div#tooltip-div")
+              .style("left", `${e.clientX + tooltipOffset.left}px`)
+              .style("top", `${e.clientY + tooltipOffset.top}px`);
+            d3.select("div#tooltip-div")
+              .selectAll("text")
+              .data([d])
+              .join("text")
+              .text((d) => d);
+          })
+          .on("mouseleave", () => {
+            d3.select("div#tooltip-div")
+              .style("opacity", 0)
+              .style("visibility", "hidden");
+          }),
       (update) =>
         update
           .transition()
@@ -502,50 +448,12 @@ function addLegend(data) {
     .attr("x", size * 1.5 + y.padding())
     .attr("y", size / 2)
     .style("fill", (d) => color(d))
+    .style("stroke", (d) => d3.color(color(d)).darker(0.7))
+    .style("stroke-width", "0.5px")
     .attr("text-anchor", "left")
     .style("dominant-baseline", "middle")
-    .text((d) => d)
+    .text((d) => truncate(d, 15))
     .style("opacity", 0)
     .transition()
     .style("opacity", 1);
 }
-
-// create a tooltip
-var Tooltip = d3
-  .select("#tooltip-div")
-  .append("svg")
-  .style("opacity", 0)
-  .attr("class", "tooltip")
-  .style("background-color", "lightblue")
-  .style("border", "solid")
-  .style("border-width", "2px")
-  .style("border-radius", "5px")
-  .style("padding", "5px")
-  .attr("height", 20)
-  .attr("width", 450);
-
-// Three function that change the tooltip when user hover / move / leave a cell
-var mouseover = function (d) {
-  Tooltip.style("opacity", 1);
-  d3.select(this).style("stroke", "black").style("opacity", 1);
-};
-var mousemove = function (event, d) {
-  const x = event.clientX;
-  const y = event.clientY;
-  Tooltip.attr("transform", `translate(${x - 400}, ${y - 275})`);
-
-  Tooltip
-    .selectAll("text")
-    .data([d])
-    .join("text")
-    .text((d) => {
-      if (d.value4 == d.value3)
-      return d.value4 + ": " + d.key +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
-      else return d.value4 + ": " + d.key +  ",\n" + d.value3 + ": " + d.value5 +",\n" + "Sales: " + parseFloat(d.value.toFixed(2));
-    })    .attr("transform", `translate(${0}, ${15})`)
-};
-var mouseleave = function (d) {
-  Tooltip.style("opacity", 0);
-  d3.select(this).style("stroke", "none");
-  Tooltip.attr("transform", `translate(${0}, ${0})`);
-};
