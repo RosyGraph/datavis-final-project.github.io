@@ -2,7 +2,7 @@ datavis-final-project.github.io
 
 http://rosygraph.github.io/datavis-final-project.github.io/
 
-data                                dataset folder
+data                                dataset folder <br>
   video_games_dataset.csv           dataset 
 images                              images folder
   bg.jpg                            background image
